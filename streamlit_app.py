@@ -33,28 +33,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar
-with st.sidebar:
-    st.header("🎨 Design Settings")
-    
-    # Cover Image
-    st.subheader("Cover Image")
-    cover_image = st.file_uploader("Upload Image (Optional)", type=['png', 'jpg', 'jpeg'])
-    
-    st.divider()
-    
-    # Course Info
-    st.subheader("Course Details")
-    
-    # Initialize empty defaults
-    if 'course_name_input' not in st.session_state:
-        st.session_state.course_name_input = ""
-    if 'term_name_input' not in st.session_state:
-        st.session_state.term_name_input = ""
-        
-    course_name = st.text_input("Course Name", key="course_name_input", placeholder="e.g. Chinese Literature")
-    term_name = st.text_input("Term", key="term_name_input", placeholder="e.g. Winter 2026")
-
 # Header
 st.title("📚 Platebook Generator")
 st.markdown("Turn your **Syllabus** directly into a **Pixel-Perfect PDF**.")
@@ -76,29 +54,24 @@ def parse_header_info(text):
     lines = text.split('\n')
     c_name = None
     t_name = None
-    
-    # scan first few lines
     for i, line in enumerate(lines[:10]):
         line = line.strip()
         if not line: continue
-        
-        # Term Regex (Winter 2026, Fall 2025, etc)
         term_match = re.search(r'(Fall|Winter|Spring|Summer)\s+\d{4}', line, re.IGNORECASE)
-        if term_match:
-            t_name = term_match.group(0)
-            
-        # Course Name: First substantial line that ISN'T the term
+        if term_match: t_name = term_match.group(0)
         if not c_name and len(line) > 5:
-            # If line is just "Syllabus" or similar, skip
-            if "syllabus" in line.lower() and len(line) < 15:
-                continue
-            if term_match and len(line) < 20: # just the term line
-                continue
+            if "syllabus" in line.lower() and len(line) < 15: continue
+            if term_match and len(line) < 20: continue
             c_name = line
-            
     return c_name, t_name
 
-# --- TAB 1: SYLLABUS PARSER ---
+# Initialize defaults
+if 'course_name_input' not in st.session_state:
+    st.session_state.course_name_input = ""
+if 'term_name_input' not in st.session_state:
+    st.session_state.term_name_input = ""
+
+# --- TAB 1: SYLLABUS PARSER (Render First to capture input) ---
 with tab1:
     st.subheader("1. Paste Syllabus Text")
     syllabus_text = st.text_area(
@@ -107,23 +80,31 @@ with tab1:
         placeholder="Chinese Traditional Literature and Thought\nWinter 2026\n\nJan 6\nIntroduction..."
     )
 
+    # Auto-detect header info immediately after input
     if syllabus_text:
-        # Auto-detect header info
         detected_course, detected_term = parse_header_info(syllabus_text)
-        
-        # Only update if fields are empty (don't overwrite user edits)
-        updated = False
+        # Update state if fields are empty
         if detected_course and not st.session_state.course_name_input:
              st.session_state.course_name_input = detected_course
-             updated = True
         if detected_term and not st.session_state.term_name_input:
              st.session_state.term_name_input = detected_term
-             updated = True
-             
-        if updated:
-            st.rerun()
 
+    # --- NOW RENDER SIDEBAR (After state potentially updated) ---
+    with st.sidebar:
+        st.header("🎨 Design Settings")
+        st.subheader("Cover Image")
+        cover_image = st.file_uploader("Upload Image (Optional)", type=['png', 'jpg', 'jpeg'])
+        st.divider()
+        st.subheader("Course Details")
+        
+        # identifying key allows bidirectional sync
+        course_name = st.text_input("Course Name", key="course_name_input", placeholder="e.g. Chinese Literature")
+        term_name = st.text_input("Term", key="term_name_input", placeholder="e.g. Winter 2026")
+
+    # --- CONTINUE TAB 1 LOGIC ---
+    if syllabus_text:
         st.subheader("2. Verify & Edit Lessons")
+        # ... parsing logic continues ...
         
         # --- PARSING LOGIC ---
         lines = syllabus_text.split('\n')
