@@ -111,6 +111,17 @@ with tab1:
                 return f"{months[start_m-1]} {d}"
             return f"{m}/{d}"
 
+        # Helper to clean title noise
+        def clean_title(text):
+            # Remove page numbers like (pp 3-24) or (p. 5)
+            text = re.sub(r'\(pp?\.?\s*\d+.*?\)', '', text, flags=re.IGNORECASE)
+            # Remove "Introduction and Translation by..."
+            text = re.sub(r'Introduction and Translation.*', '', text, flags=re.IGNORECASE)
+            # Remove file extensions or urls
+            text = re.sub(r'https?://\S+', '', text)
+            text = re.sub(r'\.pdf', '', text)
+            return text.strip(" ,.-:")
+
         for line in lines:
             line = line.strip()
             if not line: continue
@@ -137,16 +148,14 @@ with tab1:
                 remainder = line[m_text.end():].strip()
                 is_new_date = True
 
-            # Check 3: Bare Day (7) - ONLY if it's a standalone number or number followed by text
-            # Be careful not to pick up "10 weeks" or "30%"
+            # Check 3: Bare Day (7)
             elif current_month:
-                # Look for line starting with number
-                m_bare = re.match(r'^(\d{1,2})\s+(.*)', line) # "7 Some text"
-                m_bare_solo = re.match(r'^(\d{1,2})$', line)  # "7"
+                m_bare = re.match(r'^(\d{1,2})\s+(.*)', line)
+                m_bare_solo = re.match(r'^(\d{1,2})$', line)
                 
                 if m_bare:
                     d = m_bare.group(1)
-                    if int(d) <= 31: # Valid day
+                    if int(d) <= 31:
                         new_date_val = format_date(current_month, d)
                         remainder = m_bare.group(2).strip()
                         is_new_date = True
@@ -161,25 +170,38 @@ with tab1:
             if is_new_date:
                 # Save previous
                 if current_date_str:
-                    title = " ".join(current_title_parts).strip()
-                    if title and "No Class" not in title and "Midterm" not in title and "MTRP" not in title:
-                        parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": title})
+                    # Clean the title before saving
+                    final_title = " ".join(current_title_parts).strip()
+                    final_title = clean_title(final_title)
+                    
+                    if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
+                        parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
                         plate_count += 1
                         
                 current_date_str = new_date_val
-                current_title_parts = [remainder] if remainder else []
+                
+                # STRICT LOGIC: If we found text on the date line, THAT is the title. 
+                # Don't look further.
+                if remainder:
+                    current_title_parts = [remainder]
+                    title_locked = True # Lock title, ignore next lines
+                else:
+                    current_title_parts = []
+                    title_locked = False # Need to find title on next line
             else:
-                # Not a date, append to title if we have an active date
-                if current_date_str:
-                    # filtering junk lines
+                # Not a date
+                if current_date_str and not title_locked:
+                    # Only grab the FIRST line we find as the title
                     if "WEEK" not in line and "Page" not in line:
-                        current_title_parts.append(line)
+                         current_title_parts.append(line)
+                         title_locked = True # We found our title line, stop grabbing
         
         # Add last one
         if current_date_str:
-             title = " ".join(current_title_parts).strip()
-             if title and "No Class" not in title and "Midterm" not in title and "MTRP" not in title:
-                parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": title})
+             final_title = " ".join(current_title_parts).strip()
+             final_title = clean_title(final_title)
+             if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
+                parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
 
         # Data Editor
         df = pd.DataFrame(parsed_data) if parsed_data else pd.DataFrame(columns=["Plate", "Date", "Title"])
