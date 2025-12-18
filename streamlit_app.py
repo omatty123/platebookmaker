@@ -79,51 +79,107 @@ with tab1:
         # --- PARSING LOGIC ---
         lines = syllabus_text.split('\n')
         parsed_data = []
-        current_date = None
+        current_date_str = None
         current_title_parts = []
-        
-        # Regex to find date at start of line (e.g. "Jan 6" or "January 6")
-        # Captures the date part specifically
-        date_pattern = re.compile(r'^(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sept|September|Sep|Oct|October|Nov|November|Dec|December)\.?\s+\d{1,2}', re.IGNORECASE)
-        
         plate_count = 1
         
+        # State for smart parsing
+        current_month = None
+        current_year = "2026" # Default from your syllabus, or current year
+        
+        # Regex patterns
+        # 1. "1/5" or "1 / 5"
+        slash_date = re.compile(r'^(\d{1,2})\s*/\s*(\d{1,2})')
+        # 2. "Jan 6"
+        text_date = re.compile(r'^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})', re.IGNORECASE)
+        # 3. Just a number "7" (only if we have a current month)
+        bare_day = re.compile(r'^(\d{1,2})$')
+
+        # Helper to format date
+        def format_date(m, d):
+            start_m = int(m) if str(m).isdigit() else 1
+            # Simple mapping if text
+            months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+            if str(m).isalpha(): 
+                # try to find index
+                for i, mon in enumerate(months):
+                    if mon.lower() in m.lower():
+                        return f"{mon} {d}"
+                return f"{m} {d}"
+            
+            if 1 <= start_m <= 12:
+                return f"{months[start_m-1]} {d}"
+            return f"{m}/{d}"
+
         for line in lines:
             line = line.strip()
             if not line: continue
             
-            match = date_pattern.match(line)
-            if match:
-                # Save previous lesson if exists
-                if current_date:
+            is_new_date = False
+            new_date_val = None
+            remainder = ""
+
+            # Check 1: Slash Date (1/5)
+            m_slash = slash_date.match(line)
+            if m_slash:
+                m, d = m_slash.groups()
+                current_month = m
+                new_date_val = format_date(m, d)
+                remainder = line[m_slash.end():].strip()
+                is_new_date = True
+            
+            # Check 2: Text Date (Jan 6)
+            elif text_date.match(line):
+                m_text = text_date.match(line)
+                m, d = m_text.groups()
+                current_month = m
+                new_date_val = format_date(m, d)
+                remainder = line[m_text.end():].strip()
+                is_new_date = True
+
+            # Check 3: Bare Day (7) - ONLY if it's a standalone number or number followed by text
+            # Be careful not to pick up "10 weeks" or "30%"
+            elif current_month:
+                # Look for line starting with number
+                m_bare = re.match(r'^(\d{1,2})\s+(.*)', line) # "7 Some text"
+                m_bare_solo = re.match(r'^(\d{1,2})$', line)  # "7"
+                
+                if m_bare:
+                    d = m_bare.group(1)
+                    if int(d) <= 31: # Valid day
+                        new_date_val = format_date(current_month, d)
+                        remainder = m_bare.group(2).strip()
+                        is_new_date = True
+                elif m_bare_solo:
+                    d = m_bare_solo.group(1)
+                    if int(d) <= 31:
+                         new_date_val = format_date(current_month, d)
+                         remainder = ""
+                         is_new_date = True
+
+            # PROCESS MATCH
+            if is_new_date:
+                # Save previous
+                if current_date_str:
                     title = " ".join(current_title_parts).strip()
-                    # Basic filtering
-                    if title and "No Class" not in title and "Midterm" not in title:
-                        parsed_data.append({"Plate": plate_count, "Date": current_date, "Title": title})
+                    if title and "No Class" not in title and "Midterm" not in title and "MTRP" not in title:
+                        parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": title})
                         plate_count += 1
-                
-                # Start new lesson
-                current_date = match.group(0) # e.g. "Jan 6"
-                
-                # Check for remaining text on the same line (the title)
-                remainder = line[match.end():].strip()
-                # Remove common separators like ":" or "-" if they start the title
-                remainder = re.sub(r'^[:\-\.]\s*', '', remainder)
-                
-                if remainder:
-                    current_title_parts = [remainder]
-                else:
-                    current_title_parts = []
+                        
+                current_date_str = new_date_val
+                current_title_parts = [remainder] if remainder else []
             else:
-                # This line is a continuation of the title (or empty junk)
-                if current_date: 
-                    current_title_parts.append(line)
+                # Not a date, append to title if we have an active date
+                if current_date_str:
+                    # filtering junk lines
+                    if "WEEK" not in line and "Page" not in line:
+                        current_title_parts.append(line)
         
         # Add last one
-        if current_date:
+        if current_date_str:
              title = " ".join(current_title_parts).strip()
-             if title and "No Class" not in title and "Midterm" not in title:
-                parsed_data.append({"Plate": plate_count, "Date": current_date, "Title": title})
+             if title and "No Class" not in title and "Midterm" not in title and "MTRP" not in title:
+                parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": title})
 
         # Data Editor
         df = pd.DataFrame(parsed_data) if parsed_data else pd.DataFrame(columns=["Plate", "Date", "Title"])
