@@ -25,87 +25,99 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Hero Section */
-    .hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2.5rem;
-        border-radius: 16px;
-        color: white;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-        text-align: center;
-    }
-    .hero h1 {
-        color: white !important;
-        font-size: 3.5rem !important;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        letter-spacing: -1px;
-    }
-    .hero p {
-        font-size: 1.25rem;
-        opacity: 0.95;
-        font-weight: 500;
-    }
-
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 10px 20px;
-        border: 1px solid #e9ecef;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: #764ba2 !important;
-        color: white !important;
-        border: none;
-        box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
-    }
-
-    /* Primary Button */
-    div.stButton > button {
-        background: linear-gradient(92deg, #4b6cb7 0%, #182848 100%);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        height: auto;
-        font-size: 1.1rem;
-    }
-    div.stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(75, 108, 183, 0.25);
-    }
-    div.stButton > button:active {
-        transform: translateY(0);
+    /* SLEEK & SHARP DESIGN */
+    html, body, [class*="css"]  {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #0f172a;
     }
     
-    /* Inputs & Text Area */
+    /* Hero Section */
+    .hero {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 6px;
+        color: #0f172a;
+        margin-bottom: 1.5rem;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .hero h1 {
+        color: #0f172a !important;
+        font-size: 1.75rem !important;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+    .hero p {
+        font-size: 1rem;
+        color: #64748b;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    /* Tabs - Minimal Underline Style */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 24px;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent;
+        border-radius: 0;
+        padding: 8px 0;
+        border: none;
+        color: #64748b;
+        font-weight: 500;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: transparent !important;
+        color: #0f172a !important;
+        border-bottom: 2px solid #0f172a;
+        box-shadow: none;
+    }
+
+    /* Primary Button - Flat & Professional */
+    div.stButton > button {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background 0.15s ease;
+        width: 100%;
+        font-size: 0.95rem;
+        box-shadow: none;
+    }
+    div.stButton > button:hover {
+        background: #334155;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    /* Inputs - Clean lines */
     .stTextArea textarea, .stTextInput input {
-        border-radius: 10px;
-        border: 2px solid #f0f2f6;
-        transition: border-color 0.2s;
+        border-radius: 4px;
+        border: 1px solid #cbd5e1;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #764ba2;
-        box-shadow: none;
+        border-color: #0f172a;
+        box-shadow: 0 0 0 1px #0f172a;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Hero Header
+# Hero Header (Minimal)
 st.markdown("""
 <div class="hero">
-    <h1>📚 Platebook Generator</h1>
-    <p>Turn your Syllabus directly into a <b>Pixel-Perfect PDF</b>.</p>
+    <div>
+        <h1>Platebook Generator</h1>
+        <p>Syllabus to PDF. Pixel-Perfect.</p>
+    </div>
+    <div style="font-size: 2rem;">📚</div>
 </div>
 """, unsafe_allow_html=True)
 
