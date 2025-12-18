@@ -1,0 +1,131 @@
+{
+  "course": "HIST 213 East Asia in the Modern World",
+  "term": "Winter 2026",
+  "lessons": [
+    {
+      "plate_number": 1,
+      "title": "Introduction to the class, geography of East Asia",
+      "date": "Jan 6"
+    },
+    {
+      "plate_number": 2,
+      "title": "East Asian Language, Religion, Culture",
+      "date": "Jan 8"
+    },
+    {
+      "plate_number": 3,
+      "title": "What is Modernity?",
+      "date": "Jan 10"
+    },
+    {
+      "plate_number": 4,
+      "title": "Joseon Invaded",
+      "date": "Jan 13"
+    },
+    {
+      "plate_number": 5,
+      "title": "Rise of Qing, Creation of Manchu Empire",
+      "date": "Jan 15"
+    },
+    {
+      "plate_number": 6,
+      "title": "Qing's Encounter with the West",
+      "date": "Jan 17"
+    },
+    {
+      "plate_number": 7,
+      "title": "Joseon Reform",
+      "date": "Jan 22"
+    },
+    {
+      "plate_number": 8,
+      "title": "Rise of Tokugawa",
+      "date": "Jan 24"
+    },
+    {
+      "plate_number": 9,
+      "title": "Final presentation brainstorm / Current events",
+      "date": "Jan 27"
+    },
+    {
+      "plate_number": 10,
+      "title": "Qing vs. the West",
+      "date": "Jan 29"
+    },
+    {
+      "plate_number": 11,
+      "title": "Tokugawa vs. the West",
+      "date": "Jan 31"
+    },
+    {
+      "plate_number": 12,
+      "title": "Meiji \"Transformation\"",
+      "date": "Feb 3"
+    },
+    {
+      "plate_number": 13,
+      "title": "Taiping and other rebellions",
+      "date": "Feb 5"
+    },
+    {
+      "plate_number": 14,
+      "title": "Tonghak Rebellion",
+      "date": "Feb 7"
+    },
+    {
+      "plate_number": 15,
+      "title": "Joseon's Slow Evolution",
+      "date": "Feb 10"
+    },
+    {
+      "plate_number": 16,
+      "title": "Tonghak in Film",
+      "date": "Feb 12"
+    },
+    {
+      "plate_number": 17,
+      "title": "Japanese Nationalism – Rise of an empire",
+      "date": "Feb 17"
+    },
+    {
+      "plate_number": 18,
+      "title": "Korean Nationalism – Rise of a nation",
+      "date": "Feb 19"
+    },
+    {
+      "plate_number": 19,
+      "title": "Chinese Nationalism – \"modernity\" at gunpoint",
+      "date": "Feb 21"
+    },
+    {
+      "plate_number": 20,
+      "title": "The Pacific War",
+      "date": "Feb 24"
+    },
+    {
+      "plate_number": 21,
+      "title": "Civil War and Revolution in China",
+      "date": "Feb 26"
+    },
+    {
+      "plate_number": 22,
+      "title": "Rebuilding Japan",
+      "date": "Feb 28"
+    },
+    {
+      "plate_number": 23,
+      "title": "Mao and Beyond Mao",
+      "date": "March 3"
+    },
+    {
+      "plate_number": 24,
+      "title": "Liberation, Division, Rebuilding Korea",
+      "date": "March 5"
+    },
+    {
+      "plate_number": 25,
+      "title": "Japan rises again",
+      "date": "March 7"
+    }
+  ]
+}

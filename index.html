@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>HIST 213 Platebook - Winter 2026</title>
+
+  <style>
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+
+    body {
+      font-family: serif;
+      margin: 0;
+    }
+
+    .cover-page {
+      width: 100%;
+      height: 10in;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      page-break-after: always;
+    }
+
+    .cover-page h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .cover-page h2 {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .cover-page input {
+      border: 2px solid black;
+      padding: 10px;
+      font-size: 16px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .toc-page {
+      width: 100%;
+      min-height: 10in;
+      page-break-after: always;
+      padding: 20px;
+    }
+
+    .toc-page h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 2px solid black;
+      padding-bottom: 10px;
+    }
+
+    .toc-entry {
+      display: grid;
+      grid-template-columns: 60px 1fr 100px;
+      padding: 8px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .toc-plate {
+      font-weight: bold;
+    }
+
+    .toc-title {
+      padding: 0 10px;
+    }
+
+    .toc-date {
+      text-align: right;
+      font-style: italic;
+    }
+
+    .plate {
+      width: 100%;
+      height: 10in;
+      box-sizing: border-box;
+      page-break-after: always;
+    }
+
+    .header {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .box {
+      border: 2px solid black;
+      padding: 8px;
+      min-height: 70px;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .qa {
+      border: 2px solid black;
+    }
+
+    .qa-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid black;
+      font-weight: bold;
+    }
+
+    .qa-head div,
+    .qa-row div {
+      padding: 6px;
+    }
+
+    .qa-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 2px solid black;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="cover-page">
+    <h1>HIST 213 East Asia in the Modern World</h1>
+    <h2>Winter 2026</h2>
+    <input type="text" placeholder="Name: _____________________________________">
+  </div>
+
+  <div class="toc-page">
+    <h2>Table of Contents</h2>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 1</div>
+      <div class="toc-title">Introduction to the class geography of East Asia</div>
+      <div class="toc-date">Jan 6</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 2</div>
+      <div class="toc-title">East Asian Language Religion Culture</div>
+      <div class="toc-date">Jan 8</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 3</div>
+      <div class="toc-title">What is Modernity?</div>
+      <div class="toc-date">Jan 10</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 4</div>
+      <div class="toc-title">Joseon Invaded</div>
+      <div class="toc-date">Jan 13</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 5</div>
+      <div class="toc-title">Rise of Qing Creation of Manchu Empire</div>
+      <div class="toc-date">Jan 15</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 6</div>
+      <div class="toc-title">Qing's Encounter with the West</div>
+      <div class="toc-date">Jan 17</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 7</div>
+      <div class="toc-title">Joseon Reform</div>
+      <div class="toc-date">Jan 22</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 8</div>
+      <div class="toc-title">Rise of Tokugawa</div>
+      <div class="toc-date">Jan 24</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 9</div>
+      <div class="toc-title">Final presentation brainstorm / Current events</div>
+      <div class="toc-date">Jan 27</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 10</div>
+      <div class="toc-title">Qing vs. the West</div>
+      <div class="toc-date">Jan 29</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 11</div>
+      <div class="toc-title">Tokugawa vs. the West</div>
+      <div class="toc-date">Jan 31</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 12</div>
+      <div class="toc-title">Meiji Transformation</div>
+      <div class="toc-date">Feb 3</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 13</div>
+      <div class="toc-title">Taiping and other rebellions</div>
+      <div class="toc-date">Feb 5</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 14</div>
+      <div class="toc-title">Tonghak Rebellion</div>
+      <div class="toc-date">Feb 7</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 15</div>
+      <div class="toc-title">Joseon's Slow Evolution</div>
+      <div class="toc-date">Feb 10</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 16</div>
+      <div class="toc-title">Tonghak in Film</div>
+      <div class="toc-date">Feb 12</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 17</div>
+      <div class="toc-title">Japanese Nationalism - Rise of an empire</div>
+      <div class="toc-date">Feb 17</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 18</div>
+      <div class="toc-title">Korean Nationalism - Rise of a nation</div>
+      <div class="toc-date">Feb 19</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 19</div>
+      <div class="toc-title">Chinese Nationalism - modernity at gunpoint</div>
+      <div class="toc-date">Feb 21</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 20</div>
+      <div class="toc-title">The Pacific War</div>
+      <div class="toc-date">Feb 24</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 21</div>
+      <div class="toc-title">Civil War and Revolution in China</div>
+      <div class="toc-date">Feb 26</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 22</div>
+      <div class="toc-title">Rebuilding Japan</div>
+      <div class="toc-date">Feb 28</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 23</div>
+      <div class="toc-title">Mao and Beyond Mao</div>
+      <div class="toc-date">March 3</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 24</div>
+      <div class="toc-title">Liberation Division Rebuilding Korea</div>
+      <div class="toc-date">March 5</div>
+    </div>
+    <div class="toc-entry">
+      <div class="toc-plate">Plate 25</div>
+      <div class="toc-title">Japan rises again</div>
+      <div class="toc-date">March 7</div>
+    </div>
+  </div>
+
+  <script>
+    const lessons = [
+      { plate_number: 1, title: "Introduction to the class geography of East Asia", date: "Jan 6" },
+      { plate_number: 2, title: "East Asian Language Religion Culture", date: "Jan 8" },
+      { plate_number: 3, title: "What is Modernity?", date: "Jan 10" },
+      { plate_number: 4, title: "Joseon Invaded", date: "Jan 13" },
+      { plate_number: 5, title: "Rise of Qing Creation of Manchu Empire", date: "Jan 15" },
+      { plate_number: 6, title: "Qing's Encounter with the West", date: "Jan 17" },
+      { plate_number: 7, title: "Joseon Reform", date: "Jan 22" },
+      { plate_number: 8, title: "Rise of Tokugawa", date: "Jan 24" },
+      { plate_number: 9, title: "Final presentation brainstorm / Current events", date: "Jan 27" },
+      { plate_number: 10, title: "Qing vs. the West", date: "Jan 29" },
+      { plate_number: 11, title: "Tokugawa vs. the West", date: "Jan 31" },
+      { plate_number: 12, title: "Meiji Transformation", date: "Feb 3" },
+      { plate_number: 13, title: "Taiping and other rebellions", date: "Feb 5" },
+      { plate_number: 14, title: "Tonghak Rebellion", date: "Feb 7" },
+      { plate_number: 15, title: "Joseon's Slow Evolution", date: "Feb 10" },
+      { plate_number: 16, title: "Tonghak in Film", date: "Feb 12" },
+      { plate_number: 17, title: "Japanese Nationalism - Rise of an empire", date: "Feb 17" },
+      { plate_number: 18, title: "Korean Nationalism - Rise of a nation", date: "Feb 19" },
+      { plate_number: 19, title: "Chinese Nationalism - modernity at gunpoint", date: "Feb 21" },
+      { plate_number: 20, title: "The Pacific War", date: "Feb 24" },
+      { plate_number: 21, title: "Civil War and Revolution in China", date: "Feb 26" },
+      { plate_number: 22, title: "Rebuilding Japan", date: "Feb 28" },
+      { plate_number: 23, title: "Mao and Beyond Mao", date: "March 3" },
+      { plate_number: 24, title: "Liberation Division Rebuilding Korea", date: "March 5" },
+      { plate_number: 25, title: "Japan rises again", date: "March 7" }
+    ];
+
+    lessons.forEach((p, i) => {
+      document.write(`
+    <div class="plate">
+      <div class="header">
+        Plate # ${p.plate_number} &nbsp;&nbsp; ${p.title} &nbsp;&nbsp; ${p.date}
+      </div>
+
+      <div class="row three">
+        <div class="box"><div class="label">Person</div></div>
+        <div class="box"><div class="label">Place</div></div>
+        <div class="box"><div class="label">Thing</div></div>
+      </div>
+
+      <div class="row two">
+        <div class="box"><div class="label">Timeline</div></div>
+        <div class="box"><div class="label">Map</div></div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-head">
+          <div>Penetrating Questions</div>
+          <div>Very short answers</div>
+        </div>
+        <div class="qa-row">
+          <div>1</div>
+          <div></div>
+        </div>
+        <div class="qa-row">
+          <div>2</div>
+          <div></div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <div class="box">
+          <div class="label">Causes / Effects / Connections</div>
+        </div>
+        <div class="box">
+          <div class="label">Notes</div>
+        </div>
+      </div>
+    </div>
+  `);
+    });
+  </script>
+
+</body>
+
+</html>

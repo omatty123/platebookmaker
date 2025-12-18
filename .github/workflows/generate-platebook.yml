@@ -1,0 +1,83 @@
+name: Generate Platebook PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      sheet_url:
+        description: 'Google Sheet CSV URL'
+        required: true
+        default: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRM99Thl9mOl_ua5_oOA5ymxIpPEsKrW6hCOXVlsI4NInnU8g4GpYl6Tomc2PtcqRo0LGkSHholSt5b/pub?output=csv'
+      course_name:
+        description: 'Course Name'
+        required: false
+        default: 'HIST 213 East Asia in the Modern World'
+      term:
+        description: 'Term'
+        required: false
+        default: 'Winter 2026'
+
+jobs:
+  generate-pdf:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install reportlab requests
+    
+    - name: Download CSV from Google Sheets
+      run: |
+        curl -L "${{ github.event.inputs.sheet_url }}" -o lessons.csv
+    
+    - name: Convert CSV to JSON
+      run: |
+        python3 << 'EOF'
+        import csv
+        import json
+        
+        lessons = []
+        with open('lessons.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                lessons.append({
+                    "plate_number": int(row['Plate']),
+                    "title": row['Title'],
+                    "date": row['Date']
+                })
+        
+        data = {
+            "course": "${{ github.event.inputs.course_name }}",
+            "term": "${{ github.event.inputs.term }}",
+            "lessons": lessons
+        }
+        
+        with open('lessons.json', 'w') as f:
+            json.dump(data, f, indent=2)
+        EOF
+    
+    - name: Generate PDF
+      run: |
+        python3 platebook.py lessons.json platebook.pdf
+    
+    - name: Upload PDF as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: platebook-pdf
+        path: platebook.pdf
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: platebook-${{ github.run_number }}
+        name: Platebook - ${{ github.event.inputs.term }}
+        files: platebook.pdf
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

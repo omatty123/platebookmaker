@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIST 213 Platebook - Winter 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #4a4a4a;
+            --accent: #2563eb;
+            --border: #e5e7eb;
+            --bg-gray: #f9fafb;
+            --serif: 'Crimson Pro', serif;
+            --sans: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: white;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .no-print {
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .no-print h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-print p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .no-print button {
+            margin-top: 1.5rem;
+            padding: 0.75rem 2rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .no-print button:hover {
+            transform: translateY(-2px);
+        }
+
+        .cover-page {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            page-break-after: always;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .cover-page h1 {
+            font-family: var(--serif);
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .cover-page h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .cover-page .name-field {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            color: white;
+            width: 400px;
+            text-align: center;
+        }
+
+        .cover-page .name-field::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .plate {
+            width: 100%;
+            min-height: 100vh;
+            padding: 1.5rem;
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+
+        .plate-header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .plate-number {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .plate-title {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+        }
+
+        .plate-date {
+            background: var(--bg-gray);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            color: var(--secondary);
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .box {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 80px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .box:hover {
+            border-color: var(--accent);
+        }
+
+        .box-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .timeline-box {
+            min-height: 100px;
+            position: relative;
+        }
+
+        .timeline-line {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .timeline-tick {
+            position: absolute;
+            width: 2px;
+            height: 12px;
+            background: var(--secondary);
+            top: -5px;
+        }
+
+        .map-box {
+            min-height: 150px;
+            background: var(--bg-gray);
+        }
+
+        .questions {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .questions-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .questions-header div {
+            padding: 0.75rem 1rem;
+        }
+
+        .questions-header div:first-child {
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .question-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 1fr;
+            border-top: 2px solid var(--border);
+            min-height: 60px;
+        }
+
+        .question-row>div {
+            padding: 1rem;
+        }
+
+        .question-row>div:nth-child(1) {
+            background: var(--bg-gray);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid var(--border);
+        }
+
+        .question-row>div:nth-child(2) {
+            border-right: 2px solid var(--border);
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            .plate {
+                padding: 0;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="no-print">
+        <h1>📚 HIST 213 Platebook Generator</h1>
+        <p>Modern, print-ready platebook • Winter 2026</p>
+        <button onclick="window.print()">🖨️ Print Platebook</button>
+    </div>
+
+    <div id="platebook-content">
+        <!-- Content will be generated here -->
+    </div>
+
+    <script>
+        const lessons = [
+            { plate_number: 1, title: "Introduction to the class geography of East Asia", date: "Jan 6" },
+            { plate_number: 2, title: "East Asian Language Religion Culture", date: "Jan 8" },
+            { plate_number: 3, title: "What is Modernity?", date: "Jan 10" },
+            { plate_number: 4, title: "Joseon Invaded", date: "Jan 13" },
+            { plate_number: 5, title: "Rise of Qing Creation of Manchu Empire", date: "Jan 15" },
+            { plate_number: 6, title: "Qing's Encounter with the West", date: "Jan 17" },
+            { plate_number: 7, title: "Joseon Reform", date: "Jan 22" },
+            { plate_number: 8, title: "Rise of Tokugawa", date: "Jan 24" },
+            { plate_number: 9, title: "Final presentation brainstorm / Current events", date: "Jan 27" },
+            { plate_number: 10, title: "Qing vs. the West", date: "Jan 29" },
+            { plate_number: 11, title: "Tokugawa vs. the West", date: "Jan 31" },
+            { plate_number: 12, title: "Meiji Transformation", date: "Feb 3" },
+            { plate_number: 13, title: "Taiping and other rebellions", date: "Feb 5" },
+            { plate_number: 14, title: "Tonghak Rebellion", date: "Feb 7" },
+            { plate_number: 15, title: "Joseon's Slow Evolution", date: "Feb 10" },
+            { plate_number: 16, title: "Tonghak in Film", date: "Feb 12" },
+            { plate_number: 17, title: "Japanese Nationalism - Rise of an empire", date: "Feb 17" },
+            { plate_number: 18, title: "Korean Nationalism - Rise of a nation", date: "Feb 19" },
+            { plate_number: 19, title: "Chinese Nationalism - modernity at gunpoint", date: "Feb 21" },
+            { plate_number: 20, title: "The Pacific War", date: "Feb 24" },
+            { plate_number: 21, title: "Civil War and Revolution in China", date: "Feb 26" },
+            { plate_number: 22, title: "Rebuilding Japan", date: "Feb 28" },
+            { plate_number: 23, title: "Mao and Beyond Mao", date: "March 3" },
+            { plate_number: 24, title: "Liberation Division Rebuilding Korea", date: "March 5" },
+            { plate_number: 25, title: "Japan rises again", date: "March 7" }
+        ];
+
+        function generateCoverPage() {
+            return `
+                <div class="cover-page">
+                    <h1>HIST 213 East Asia in the Modern World</h1>
+                    <h2>Winter 2026</h2>
+                    <input type="text" class="name-field" placeholder="Your Name" />
+                </div>
+            `;
+        }
+
+        function generatePlate(lesson) {
+            return `
+                <div class="plate">
+                    <div class="plate-header">
+                        <div class="plate-number">Plate ${lesson.plate_number}</div>
+                        <div class="plate-title">${lesson.title}</div>
+                        <div class="plate-date">${lesson.date}</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="grid-3">
+                            <div class="box">
+                                <div class="box-label">Person</div>
+                            </div>
+                            <div class="box">
+                                <div class="box-label">Place</div>
+                            </div>
+                            <div class="box">
+                                <div class="box-label">Thing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="grid-2">
+                            <div class="box timeline-box">
+                                <div class="box-label">Timeline</div>
+                                <div class="timeline-line">
+                                    ${Array.from({ length: 11 }, (_, i) =>
+                `<div class="timeline-tick" style="left: ${i * 10}%"></div>`
+            ).join('')}
+                                </div>
+                            </div>
+                            <div class="box map-box">
+                                <div class="box-label">Map</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="questions">
+                            <div class="questions-header">
+                                <div>Penetrating Questions</div>
+                                <div>Very Short Answers</div>
+                            </div>
+                            <div class="question-row">
+                                <div>1</div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                            <div class="question-row">
+                                <div>2</div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="grid-2">
+                            <div class="box">
+                                <div class="box-label">Causes / Effects / Connections</div>
+                            </div>
+                            <div class="box">
+                                <div class="box-label">Notes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generatePlatebook() {
+            const content = document.getElementById('platebook-content');
+            let html = generateCoverPage();
+            lessons.forEach(lesson => {
+                html += generatePlate(lesson);
+            });
+            content.innerHTML = html;
+        }
+
+        generatePlatebook();
+    </script>
+</body>
+
+</html>
