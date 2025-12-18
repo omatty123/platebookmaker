@@ -25,98 +25,111 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* MODERN DIGNIFIED DESIGN (Clean Slate) */
+    /* MONTAFON MOONLIGHT THEME */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
     html, body, [class*="css"]  {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        color: #0f172a; /* Slate 900 */
+        font-family: 'Inter', sans-serif;
+        color: #111827; /* Gray 900 */
         background-color: #ffffff;
+    }
+    
+    /* The Moonlight Glow - Vignette */
+    .stApp {
+        background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+                    #ffffff;
     }
     
     /* Headers */
     h1, h2, h3 {
-        color: #0f172a !important;
+        color: #111827 !important;
         font-weight: 600 !important;
         letter-spacing: -0.02em;
     }
     
-    /* Hero Section - Minimal */
+    /* Hero Section - Card Style */
     .hero {
-        background-color: #f8fafc; /* Slate 50 */
-        border: 1px solid #e2e8f0; /* Slate 200 */
-        padding: 2rem;
-        border-radius: 8px;
-        color: #0f172a;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(229, 231, 235, 0.5);
+        padding: 2.5rem;
+        border-radius: 12px;
+        color: #111827;
         margin-bottom: 2rem;
         text-align: left;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
     .hero h1 {
-        font-size: 2.25rem !important;
+        font-size: 2.5rem !important;
         font-weight: 700;
         margin-bottom: 0.5rem;
+        color: #2563eb !important; /* Electric Blue Accent */
     }
     .hero p {
-        font-size: 1.1rem;
-        color: #475569; /* Slate 600 */
+        font-size: 1.125rem;
+        color: #4b5563; /* Gray 600 */
         font-weight: 400;
         margin: 0;
     }
 
-    /* Tabs - Clean Pills */
+    /* Tabs - Clean & Spaced */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 1rem;
+        gap: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 0;
     }
     .stTabs [data-baseweb="tab"] {
         background-color: transparent;
-        border-radius: 6px;
-        padding: 6px 16px;
+        border-radius: 6px 6px 0 0;
+        padding: 10px 20px;
         border: none;
-        color: #64748b; /* Slate 500 */
+        color: #6b7280; /* Gray 500 */
         font-weight: 500;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #f1f5f9 !important; /* Slate 100 */
-        color: #0f172a !important;
+        background-color: transparent !important;
+        color: #2563eb !important; /* Electric Blue */
+        border-bottom: 2px solid #2563eb;
         font-weight: 600;
     }
 
-    /* Button - Solid & Serious */
+    /* Button - Electric Blue */
     div.stButton > button {
-        background-color: #0f172a; /* Slate 900 */
+        background-color: #2563eb; /* Electric Blue */
         color: white;
-        border: 1px solid #0f172a;
-        padding: 0.6rem 1.2rem;
-        border-radius: 6px;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px; /* 12px might be too round for small button */
         font-weight: 500;
         width: 100%;
-        transition: all 0.15s ease;
-        box-shadow: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     }
     div.stButton > button:hover {
-        background-color: #1e293b; /* Slate 800 */
-        border-color: #1e293b;
+        background-color: #1d4ed8; /* Darker Blue */
         transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
     }
     
     /* Inputs - refined */
     .stTextArea textarea, .stTextInput input {
-        border-radius: 6px;
-        border: 1px solid #cbd5e1; /* Slate 300 */
-        color: #0f172a;
+        border-radius: 8px;
+        border: 1px solid #d1d5db; /* Gray 300 */
+        padding: 0.75rem;
+        transition: border-color 0.15s ease;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #0f172a;
-        box-shadow: 0 0 0 1px #0f172a;
+        border-color: #2563eb; /* Electric Blue */
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Glow ring */
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Hero Header (Clean)
+# Hero Header (Moonlight)
 st.markdown("""
 <div class="hero">
     <h1>Platebook Generator</h1>
-    <p>Professional Syllabus Typesetter</p>
+    <p>Professional Syllabus Typesetting. <b>Pixel-Perfect.</b></p>
 </div>
 """, unsafe_allow_html=True)
 
