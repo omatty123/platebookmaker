@@ -196,6 +196,21 @@ with tab1:
             # Remove "Listen to..."
             text = re.sub(r'Listen to.*', '', text, flags=re.IGNORECASE)
             
+            # Remove "Blast from the past"
+            text = re.sub(r'Blast from the past.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove "Story of..." (Miss Li, Tsui Ying-Ying, etc)
+            text = re.sub(r'Story of.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'The Story of.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'Funny story.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove "Selections from..."
+            text = re.sub(r'Selections from.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove Su Shi notes
+            text = re.sub(r'.*Su Shi.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'.*Dongpo.*', '', text, flags=re.IGNORECASE)
+            
             # Clean up extra spaces
             text = re.sub(r'\s+', ' ', text).strip()
             return text.strip(" ,.-:/") # added slash to strip
