@@ -45,8 +45,17 @@ with st.sidebar:
     
     # Course Info
     st.subheader("Course Details")
-    course_name = st.text_input("Course Name", value="HIST 213 East Asia in the Modern World")
-    term_name = st.text_input("Term", value="Winter 2026")
+    
+    DEFAULT_COURSE = "HIST 213 East Asia in the Modern World"
+    DEFAULT_TERM = "Winter 2026"
+    
+    if 'course_name_input' not in st.session_state:
+        st.session_state.course_name_input = DEFAULT_COURSE
+    if 'term_name_input' not in st.session_state:
+        st.session_state.term_name_input = DEFAULT_TERM
+        
+    course_name = st.text_input("Course Name", key="course_name_input")
+    term_name = st.text_input("Term", key="term_name_input")
 
 # Header
 st.title("📚 Platebook Generator")
@@ -64,16 +73,59 @@ def save_uploaded_image(uploaded_file):
         return temp_path
     return None
 
+# Helper to parse header info
+def parse_header_info(text):
+    lines = text.split('\n')
+    c_name = None
+    t_name = None
+    
+    # scan first few lines
+    for i, line in enumerate(lines[:10]):
+        line = line.strip()
+        if not line: continue
+        
+        # Term Regex (Winter 2026, Fall 2025, etc)
+        term_match = re.search(r'(Fall|Winter|Spring|Summer)\s+\d{4}', line, re.IGNORECASE)
+        if term_match:
+            t_name = term_match.group(0)
+            
+        # Course Name: First substantial line that ISN'T the term
+        if not c_name and len(line) > 5:
+            # If line is just "Syllabus" or similar, skip
+            if "syllabus" in line.lower() and len(line) < 15:
+                continue
+            if term_match and len(line) < 20: # just the term line
+                continue
+            c_name = line
+            
+    return c_name, t_name
+
 # --- TAB 1: SYLLABUS PARSER ---
 with tab1:
     st.subheader("1. Paste Syllabus Text")
     syllabus_text = st.text_area(
         "Paste your class schedule here (dates and titles)",
         height=300,
-        placeholder="Jan 6\nIntroduction to the class\n\nJan 8\nEast Asian Language..."
+        placeholder="Chinese Traditional Literature and Thought\nWinter 2026\n\nJan 6\nIntroduction..."
     )
 
     if syllabus_text:
+        # Auto-detect header info
+        detected_course, detected_term = parse_header_info(syllabus_text)
+        
+        # Only update if we are purely on defaults (don't overwrite user edits)
+        # OR if it seems the user just pasted a new syllabus
+        updated = False
+        if detected_course and st.session_state.course_name_input == DEFAULT_COURSE:
+             st.session_state.course_name_input = detected_course
+             updated = True
+        if detected_term and st.session_state.term_name_input == DEFAULT_TERM:
+             st.session_state.term_name_input = detected_term
+             updated = True
+             
+        if updated:
+            st.rerun()
+
         st.subheader("2. Verify & Edit Lessons")
         
         # --- PARSING LOGIC ---
