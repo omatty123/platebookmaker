@@ -167,6 +167,16 @@ with tab1:
             # Remove quotes
             text = text.replace('“', '').replace('”', '').replace('"', '')
             
+            # Remove "pp." if it appears outside parens
+            text = re.sub(r'pp\.?\s*\d+[-–]\d+', '', text, flags=re.IGNORECASE)
+            
+            # Remove "Vol." or "New York" (Bibliographic info)
+            text = re.sub(r'Vol\.?\s*\d+', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'New York:.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove common Author names (Specific to this syllabus but useful generally)
+            text = re.sub(r'\b(Ivanhoe|Van Norden|Birch|Turner|Slingerland|Kjellberg|Hutton|Harris)\b.*', '', text, flags=re.IGNORECASE)
+            
             # Remove "Introduction" if it's generic (followed by comma or colon)
             text = re.sub(r'^Introduction\s*[,:]\s*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Introduction and Translation.*', '', text, flags=re.IGNORECASE)
