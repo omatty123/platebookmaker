@@ -220,10 +220,10 @@ with tab1:
         current_year = "2026" # Default from your syllabus, or current year
         
         # Regex patterns
-        # 1. "1/5" or "1 / 5"
-        slash_date = re.compile(r'^(\d{1,2})\s*/\s*(\d{1,2})')
-        # 2. "Jan 6"
-        text_date = re.compile(r'^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})', re.IGNORECASE)
+        # 1. "1/5" or "1 / 5" (optionally preceded by day)
+        slash_date = re.compile(r'^(?:[A-Za-z]{2,10}\s*,?\s*)?(\d{1,2})\s*/\s*(\d{1,2})')
+        # 2. "Jan 6" (optionally preceded by day like "Mon, Jan 6")
+        text_date = re.compile(r'^(?:[A-Za-z]{2,10}\s*,?\s*)?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})', re.IGNORECASE)
         # 3. Just a number "7" (only if we have a current month)
         bare_day = re.compile(r'^(\d{1,2})$')
 
@@ -265,27 +265,26 @@ with tab1:
             text = re.sub(r'Vol\.?\s*\d+', '', text, flags=re.IGNORECASE)
             text = re.sub(r'New York:.*', '', text, flags=re.IGNORECASE)
             
-            # Remove common Author names (Specific to this syllabus but useful generally)
-            text = re.sub(r'\b(Ivanhoe|Van Norden|Birch|Turner|Slingerland|Kjellberg|Hutton|Harris)\b.*', '', text, flags=re.IGNORECASE)
+            # Remove common Author names (Only if they are at the start or followed by common biblio separators)
+            text = re.sub(r'\b(Ivanhoe|Van Norden|Birch|Turner|Slingerland|Kjellberg|Hutton|Harris)\b[:,\s]*', '', text, flags=re.IGNORECASE)
             
             # Remove "Introduction" if it's generic (followed by comma or colon)
             text = re.sub(r'^Introduction\s*[,:]\s*', '', text, flags=re.IGNORECASE)
-            text = re.sub(r'Introduction and Translation.*', '', text, flags=re.IGNORECASE)
             
             # Remove assignments/papers
             text = re.sub(r'PAPER #\d+.*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Final paper.*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Preliminary Thesis.*', '', text, flags=re.IGNORECASE)
-            text = re.sub(r'.*Due.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'.*Due\s*(?:today|on|by).*', '', text, flags=re.IGNORECASE)
             
             # Remove file extensions or urls markdown
-            text = re.sub(r'\[.*?\]\s*\(https.*?\)', '', text) 
+            text = re.sub(r'\[.*?\]\s*\(https?://.*?\)', '', text) 
             
             # Remove "Week X" if it ended up in the title
-            text = re.sub(r'Week\s+\d+', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'Week\s+\d+[:\s]*', '', text, flags=re.IGNORECASE)
             
             # Remove "Reading:" or "Discussion:" prefix
-            text = re.sub(r'^(Readings?|Discussion|Watch|Recommended|Optional|Listen to):\s*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'^(?:Readings?|Discussion|Watch|Recommended|Optional|Listen to)[:\s]*', '', text, flags=re.IGNORECASE)
             
             # Remove "Blast from the past"
             text = re.sub(r'Blast from the past.*', '', text, flags=re.IGNORECASE)
@@ -467,7 +466,8 @@ with tab1:
                         
                         # Fallback link
                         base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                        st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" target="_blank">Open Full PDF in New Tab</a>', unsafe_allow_html=True)
+                        # Note: Some browsers block data: URLs in new tabs. We provide the download button as the primary action.
+                        st.markdown(f"**Tip**: If the preview above is too small, use the Download button or [right-click here to Save As](data:application/pdf;base64,{base64_pdf})")
                         
                         # Cleanup
                         if os.path.exists(temp_json): os.remove(temp_json)
@@ -532,7 +532,8 @@ with tab2:
                     
                     # Fallback link
                     base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                    st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" target="_blank">Open Full PDF in New Tab</a>', unsafe_allow_html=True)
+                    # Note: Some browsers block data: URLs in new tabs. We provide the download button as the primary action.
+                    st.markdown(f"**Tip**: If the preview above is too small, use the Download button or [right-click here to Save As](data:application/pdf;base64,{base64_pdf})")
                     
                     if os.path.exists(temp_json): os.remove(temp_json)
                     if img_path and os.path.exists(img_path): os.remove(img_path)
