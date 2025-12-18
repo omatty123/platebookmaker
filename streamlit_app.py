@@ -81,27 +81,48 @@ with tab1:
         parsed_data = []
         current_date = None
         current_title_parts = []
-        date_pattern = re.compile(r'^(Jan|Feb|Mar|March|Apr|April|May|Jun|June|Aug|Sept|Sep|Oct|Nov|Dec)\s+\d{1,2}.*')
+        
+        # Regex to find date at start of line (e.g. "Jan 6" or "January 6")
+        # Captures the date part specifically
+        date_pattern = re.compile(r'^(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sept|September|Sep|Oct|October|Nov|November|Dec|December)\.?\s+\d{1,2}', re.IGNORECASE)
+        
         plate_count = 1
         
         for line in lines:
             line = line.strip()
             if not line: continue
             
-            if date_pattern.match(line):
-                if current_date and current_title_parts:
+            match = date_pattern.match(line)
+            if match:
+                # Save previous lesson if exists
+                if current_date:
                     title = " ".join(current_title_parts).strip()
-                    if "No Class" not in title and "Midterm" not in title:
+                    # Basic filtering
+                    if title and "No Class" not in title and "Midterm" not in title:
                         parsed_data.append({"Plate": plate_count, "Date": current_date, "Title": title})
                         plate_count += 1
-                current_date = line
-                current_title_parts = [] 
+                
+                # Start new lesson
+                current_date = match.group(0) # e.g. "Jan 6"
+                
+                # Check for remaining text on the same line (the title)
+                remainder = line[match.end():].strip()
+                # Remove common separators like ":" or "-" if they start the title
+                remainder = re.sub(r'^[:\-\.]\s*', '', remainder)
+                
+                if remainder:
+                    current_title_parts = [remainder]
+                else:
+                    current_title_parts = []
             else:
-                if current_date: current_title_parts.append(line)
+                # This line is a continuation of the title (or empty junk)
+                if current_date: 
+                    current_title_parts.append(line)
         
-        if current_date and current_title_parts:
+        # Add last one
+        if current_date:
              title = " ".join(current_title_parts).strip()
-             if "No Class" not in title and "Midterm" not in title:
+             if title and "No Class" not in title and "Midterm" not in title:
                 parsed_data.append({"Plate": plate_count, "Date": current_date, "Title": title})
 
         # Data Editor
