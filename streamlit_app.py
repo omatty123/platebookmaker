@@ -112,14 +112,30 @@ with tab1:
             return f"{m}/{d}"
 
         # Helper to clean title noise
-        def clean_title(text):
-            # Remove page numbers like (pp 3-24) or (p. 5)
+        def clean_line_text(text):
+            # Remove "ANTHOLOGY:" prefix
+            text = re.sub(r'^ANTHOLOGY:\s*', '', text, flags=re.IGNORECASE)
+            # Remove page numbers like (pp 3-24) or (30-48) or (123 - 456)
+            text = re.sub(r'\(\s*\d+\s*[-–]\s*\d+\s*\)', '', text)
             text = re.sub(r'\(pp?\.?\s*\d+.*?\)', '', text, flags=re.IGNORECASE)
+            
             # Remove "Introduction and Translation by..."
             text = re.sub(r'Introduction and Translation.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove assignments/papers
+            text = re.sub(r'PAPER #\d+.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'Final paper.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'Paper #\d+.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'Preliminary Thesis.*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'.*Due.*', '', text, flags=re.IGNORECASE)
+            
+            # Remove "Turn in..." or "Submit..." if they appear (just in case)
+            text = re.sub(r'Turn in.*', '', text, flags=re.IGNORECASE)
+            
             # Remove file extensions or urls
             text = re.sub(r'https?://\S+', '', text)
-            text = re.sub(r'\.pdf', '', text)
+            text = re.sub(r'\[.*?\]\s*\(https.*?\)', '', text) # markdown links
+            
             return text.strip(" ,.-:")
 
         for line in lines:
@@ -155,7 +171,7 @@ with tab1:
                 
                 if m_bare:
                     d = m_bare.group(1)
-                    if int(d) <= 31:
+                    if int(d) <= 31: 
                         new_date_val = format_date(current_month, d)
                         remainder = m_bare.group(2).strip()
                         is_new_date = True
@@ -168,38 +184,31 @@ with tab1:
 
             # PROCESS MATCH
             if is_new_date:
-                # Save previous
+                # Save previous lesson
                 if current_date_str:
-                    # Clean the title before saving
-                    final_title = " ".join(current_title_parts).strip()
-                    final_title = clean_title(final_title)
+                    # Join all parts
+                    cleaned_parts = [clean_line_text(p) for p in current_title_parts]
+                    cleaned_parts = [p for p in cleaned_parts if p] # Remove empty
+                    final_title = " / ".join(cleaned_parts)
                     
                     if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
                         parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
                         plate_count += 1
                         
                 current_date_str = new_date_val
-                
-                # STRICT LOGIC: If we found text on the date line, THAT is the title. 
-                # Don't look further.
-                if remainder:
-                    current_title_parts = [remainder]
-                    title_locked = True # Lock title, ignore next lines
-                else:
-                    current_title_parts = []
-                    title_locked = False # Need to find title on next line
+                current_title_parts = [remainder] if remainder else []
             else:
-                # Not a date
-                if current_date_str and not title_locked:
-                    # Only grab the FIRST line we find as the title
+                # Not a date -> content line for current lesson
+                if current_date_str:
                     if "WEEK" not in line and "Page" not in line:
                          current_title_parts.append(line)
-                         title_locked = True # We found our title line, stop grabbing
         
         # Add last one
         if current_date_str:
-             final_title = " ".join(current_title_parts).strip()
-             final_title = clean_title(final_title)
+             cleaned_parts = [clean_line_text(p) for p in current_title_parts]
+             cleaned_parts = [p for p in cleaned_parts if p]
+             final_title = " / ".join(cleaned_parts)
+             
              if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
                 parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
 
