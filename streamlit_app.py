@@ -257,10 +257,23 @@ with tab1:
                     cleaned_parts = [p for p in cleaned_parts if p] # Remove empty
                     
                     # Deduplicate? No, sequence matters.
-                    final_title = " / ".join(cleaned_parts)
+                    # Smart Assembly: Fit whole parts into 120 chars
+                    final_title = ""
+                    for i, part in enumerate(cleaned_parts):
+                        if i == 0:
+                            final_title = part
+                        else:
+                            # Check if adding this part keeps us under 120
+                            if len(final_title) + 3 + len(part) <= 120:
+                                final_title += " / " + part
+                            else:
+                                # Start of a new part would limit us?
+                                # If we have space for at least 15 chars, maybe truncate the part?
+                                # User said "Make the tough decision". 
+                                # Decision: Drop subsequent parts if they don't fit.
+                                break 
                     
                     if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
-                        if len(final_title) > 150: final_title = final_title[:147] + "..."
                         parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
                         plate_count += 1
                         
@@ -276,10 +289,18 @@ with tab1:
         if current_date_str:
              cleaned_parts = [clean_line_text(p) for p in current_title_parts]
              cleaned_parts = [p for p in cleaned_parts if p]
-             final_title = " / ".join(cleaned_parts)
+             # Smart Assembly: Fit whole parts into 120 chars
+             final_title = ""
+             for i, part in enumerate(cleaned_parts):
+                 if i == 0:
+                     final_title = part
+                 else:
+                     if len(final_title) + 3 + len(part) <= 120:
+                         final_title += " / " + part
+                     else:
+                         break
              
              if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
-                if len(final_title) > 150: final_title = final_title[:147] + "..."
                 parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
 
         # Data Editor
