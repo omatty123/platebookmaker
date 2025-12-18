@@ -5,6 +5,7 @@ import requests
 import os
 import re
 import pandas as pd
+import base64
 import platebook
 from platebook import generate
 
@@ -15,27 +16,98 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS
+# Custom CSS for Premium Look
 st.markdown("""
     <style>
-    .stButton>button {
-        width: 100%;
-        background-color: #007AFF;
-        color: white;
-        height: 3em;
-        border-radius: 8px;
-        font-weight: bold;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    html, body, [class*="css"]  {
+        font-family: 'Inter', sans-serif;
     }
-    .stButton>button:hover {
-        background-color: #0056b3;
+    
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2.5rem;
+        border-radius: 16px;
         color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        text-align: center;
+    }
+    .hero h1 {
+        color: white !important;
+        font-size: 3.5rem !important;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+    }
+    .hero p {
+        font-size: 1.25rem;
+        opacity: 0.95;
+        font-weight: 500;
+    }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px 20px;
+        border: 1px solid #e9ecef;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #764ba2 !important;
+        color: white !important;
+        border: none;
+        box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+    }
+
+    /* Primary Button */
+    div.stButton > button {
+        background: linear-gradient(92deg, #4b6cb7 0%, #182848 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        height: auto;
+        font-size: 1.1rem;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(75, 108, 183, 0.25);
+    }
+    div.stButton > button:active {
+        transform: translateY(0);
+    }
+    
+    /* Inputs & Text Area */
+    .stTextArea textarea, .stTextInput input {
+        border-radius: 10px;
+        border: 2px solid #f0f2f6;
+        transition: border-color 0.2s;
+    }
+    .stTextArea textarea:focus, .stTextInput input:focus {
+        border-color: #764ba2;
+        box-shadow: none;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Header
-st.title("📚 Platebook Generator")
-st.markdown("Turn your **Syllabus** directly into a **Pixel-Perfect PDF**.")
+# Hero Header
+st.markdown("""
+<div class="hero">
+    <h1>📚 Platebook Generator</h1>
+    <p>Turn your Syllabus directly into a <b>Pixel-Perfect PDF</b>.</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Tabs
 tab1, tab2 = st.tabs(["📝 Paste Syllabus (Magic)", "🔗 Google Sheet URL"])
@@ -84,11 +156,11 @@ if 'term_name_input' not in st.session_state:
 
 # --- TAB 1: SYLLABUS PARSER (Render First to capture input) ---
 with tab1:
-    st.subheader("1. Paste Syllabus Text")
+    st.subheader("1. ✨ Paste Syllabus Text")
     syllabus_text = st.text_area(
-        "Paste your class schedule here (dates and titles)",
+        "Simply Copy & Paste your entire syllabus below. We'll handle the rest.",
         height=300,
-        placeholder="Chinese Traditional Literature and Thought\nWinter 2026\n\nJan 6\nIntroduction..."
+        placeholder="Course Name: Chinese Literature\nTerm: Winter 2026\n\nJan 6\nIntroduction to the class\n(pp 1-10)\n\nJan 8\nBook of Songs...\n\n(We will automatically extract the course name, term, and clear lesson cleaning rules!)"
     )
 
     # Auto-detect header info immediately after input
@@ -101,20 +173,28 @@ with tab1:
              st.session_state.term_name_input = detected_term
 
     # --- NOW RENDER SIDEBAR (After state potentially updated) ---
+    # --- NOW RENDER SIDEBAR (After state potentially updated) ---
     with st.sidebar:
-        st.header("🎨 Design Settings")
-        st.subheader("Cover Image")
-        cover_image = st.file_uploader("Upload Image (Optional)", type=['png', 'jpg', 'jpeg'])
+        st.header("🎨 Cover & Info")
+        
+        st.caption("Upload a custom cover image to make your platebook stand out.")
+        cover_image = st.file_uploader("Upload Cover Image", type=['png', 'jpg', 'jpeg'])
+        
         st.divider()
-        st.subheader("Course Details")
+        
+        st.subheader("📚 Course Details")
+        st.caption("Auto-filled from your syllabus, or edit manually.")
         
         # identifying key allows bidirectional sync
         course_name = st.text_input("Course Name", key="course_name_input", placeholder="e.g. Chinese Literature")
         term_name = st.text_input("Term", key="term_name_input", placeholder="e.g. Winter 2026")
+        
+        st.divider()
+        st.info("💡 **Pro Tip**: Paste your syllabus to auto-fill these fields!")
 
     # --- CONTINUE TAB 1 LOGIC ---
     if syllabus_text:
-        st.subheader("2. Verify & Edit Lessons")
+        st.subheader("2. ✅ Verify & Edit Lessons")
         # ... parsing logic continues ...
         
         # --- PARSING LOGIC ---
@@ -369,10 +449,17 @@ with tab1:
                             mime="application/pdf"
                         )
                         
+                        st.balloons()
+                        
+                        # Preview PDF
+                        st.markdown("### 📄 PDF Preview")
+                        base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
+                        pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+                        st.markdown(pdf_display, unsafe_allow_html=True)
+                        
                         # Cleanup
                         if os.path.exists(temp_json): os.remove(temp_json)
                         if img_path and os.path.exists(img_path): os.remove(img_path)
-                        st.balloons()
                         
                 except Exception as e:
                     st.error(f"Error: {e}")
@@ -427,6 +514,12 @@ with tab2:
                         file_name="GoogleSheet_Platebook.pdf",
                         mime="application/pdf"
                     )
+                    
+                    # Preview PDF
+                    st.markdown("### 📄 PDF Preview")
+                    base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
+                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+                    st.markdown(pdf_display, unsafe_allow_html=True)
                     
                     if os.path.exists(temp_json): os.remove(temp_json)
                     if img_path and os.path.exists(img_path): os.remove(img_path)
