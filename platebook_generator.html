@@ -464,49 +464,30 @@
 </head>
 
 <body>
-    <!-- Configuration Panel (Screen Only) -->
-    <div class="config-panel">
-        <h1>📚 Platebook Generator</h1>
-        <p>Generate print-ready platebooks from Google Sheets</p>
+    <!-- Simple UI -->
+    <div class="config-panel"
+        style="text-align: center; background: white; color: #333; padding: 4rem 2rem; box-shadow: none;">
+        <h1 style="margin-bottom: 2rem; font-size: 2.5rem; color: #1a1a1a;">Platebook Generator</h1>
 
-        <div class="input-group">
-            <label>Course Name</label>
-            <input type="text" id="courseName" value="HIST 213 East Asia in the Modern World">
-        </div>
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <input type="text" id="sheetUrl" placeholder="Paste Google Sheet CSV URL here..."
+                    style="flex: 1; padding: 1rem; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 8px; outline: none;">
+                <button id="generateBtn"
+                    style="background: #007AFF; color: white; border: none; padding: 0 2rem; font-size: 1.1rem; border-radius: 8px; cursor: pointer;">Generate</button>
+            </div>
 
-        <div class="input-group">
-            <label>Term</label>
-            <input type="text" id="termName" value="Winter 2026">
-        </div>
-
-        <div class="input-group">
-            <label>Google Sheet CSV URL (Published)</label>
-            <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <small style="display:block; margin-top:0.5rem; opacity:0.8;">
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 2rem;">
                 File → Share → Publish to web → CSV → Copy link
-            </small>
-        </div>
+            </p>
 
-        <div class="input-group">
-            <label>OR Upload CSV File</label>
-            <input type="file" id="csvFile" accept=".csv">
-        </div>
+            <button id="printBtn" disabled
+                style="background: #333; color: white; border: none; padding: 1rem 3rem; font-size: 1.1rem; border-radius: 8px; cursor: not-allowed; opacity: 0.5;">
+                🖨️ Print to PDF
+            </button>
 
-        <div class="input-group">
-            <label>OR Paste CSV Data</label>
-            <textarea id="csvData" rows="4"
-                style="width:100%; padding:0.75rem; border-radius:8px; border:2px solid rgba(255,255,255,0.3); font-family:monospace; font-size:0.9rem; box-sizing:border-box;"></textarea>
-            <small style="display:block; margin-top:0.5rem; opacity:0.8;">
-                Format: Plate,Date,Title (one per line)
-            </small>
+            <div id="status" class="status" style="margin-top: 2rem; text-align: left;"></div>
         </div>
-
-        <div class="button-group">
-            <button id="generateBtn">🔄 Generate Platebook</button>
-            <button id="printBtn" disabled>🖨️ Print to PDF</button>
-        </div>
-
-        <div class="status" id="status"></div>
     </div>
 
     <!-- Platebook Content (Print Only) -->
@@ -522,48 +503,45 @@
         printBtn.addEventListener('click', () => window.print());
 
         async function generatePlatebook() {
-            const courseName = document.getElementById('courseName').value;
-            const termName = document.getElementById('termName').value;
-            const sheetUrl = document.getElementById('sheetUrl').value;
-            const csvFile = document.getElementById('csvFile').files[0];
-            const csvData = document.getElementById('csvData').value;
+            const sheetUrl = document.getElementById('sheetUrl').value.trim();
+            const courseName = "HIST 213 East Asia in the Modern World";
+            const termName = "Winter 2026";
 
-            let csvText = '';
+            if (!sheetUrl) {
+                showStatus('Please paste a Google Sheet CSV URL', 'error');
+                return;
+            }
+
+            // Reset UI
+            status.style.display = 'none';
+            printBtn.disabled = true;
+            printBtn.style.opacity = '0.5';
+            printBtn.style.cursor = 'not-allowed';
+            platebookDiv.innerHTML = '';
+
+            showStatus('Loading...', 'success');
 
             try {
-                // Method 1: Google Sheet URL with CORS proxy
-                if (sheetUrl) {
-                    showStatus('Loading from Google Sheets...', 'success');
-                    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error('Failed to fetch sheet');
-                    csvText = await response.text();
-                }
-                // Method 2: Local file upload
-                else if (csvFile) {
-                    showStatus('Reading uploaded file...', 'success');
-                    csvText = await csvFile.text();
-                }
-                // Method 3: Pasted CSV data
-                else if (csvData) {
-                    showStatus('Processing pasted data...', 'success');
-                    csvText = csvData;
-                }
-                else {
-                    showStatus('Please provide data via Google Sheet URL, file upload, or paste CSV', 'error');
-                    return;
-                }
+                // Use CORS proxy
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
+                const response = await fetch(proxyUrl);
 
+                if (!response.ok) throw new Error('Failed to fetch data');
+
+                const csvText = await response.text();
                 const lessons = parseCSV(csvText);
 
                 if (lessons.length === 0) {
-                    showStatus('No lessons found. Check your CSV format.', 'error');
+                    showStatus('No lessons found. Make sure you published as CSV!', 'error');
                     return;
                 }
 
                 renderPlatebook(courseName, termName, lessons);
-                showStatus(`✓ Generated ${lessons.length} plates successfully!`, 'success');
+
+                showStatus(`✓ Ready to print! (${lessons.length} plates)`, 'success');
                 printBtn.disabled = false;
+                printBtn.style.opacity = '1';
+                printBtn.style.cursor = 'pointer';
 
             } catch (error) {
                 showStatus('Error: ' + error.message, 'error');

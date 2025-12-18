@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 """
 HIST 213 Platebook Generator - Google Sheets Edition
-Reads data from Google Sheets CSV and generates pixel-perfect PDF
 """
 
-import json
 import sys
+import json
 import argparse
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.colors import Color, black
+import platebook  # Import the original generator
 
 try:
     import requests
 except ImportError:
     print("Missing requests. Run: pip install requests")
-    exit(1)
-
-# Import all constants and functions from platebook.py
-exec(open('platebook.py').read())
+    sys.exit(1)
 
 def fetch_google_sheet_csv(url):
     """Fetch CSV data from a published Google Sheet"""
@@ -83,65 +77,21 @@ def main():
         "lessons": lessons
     }
     
-    # Generate PDF using the existing generate function
-    c = canvas.Canvas(args.output, pagesize=letter)
+    # Save temp JSON
+    temp_json = "_temp_lessons.json"
+    with open(temp_json, 'w') as f:
+        json.dump(data, f, indent=2)
+
+    # Call the original generator
+    print(f"Generating PDF: {args.output}")
+    platebook.generate(temp_json, args.output)
     
-    # Cover Page
-    c.setFont("Helvetica-Bold", 18)
-    c.setFillColor(BLACK)
-    w = c.stringWidth(data["course"], "Helvetica-Bold", 18)
-    c.drawString((PAGE_WIDTH - w) / 2, 180, data["course"])
-    
-    c.setFont("Helvetica-Bold", 16)
-    w = c.stringWidth(data["term"], "Helvetica-Bold", 16)
-    c.drawString((PAGE_WIDTH - w) / 2, 150, data["term"])
-    
-    c.setFont(FONT_NAME, 12)
-    name = "Name:_____________________________________"
-    w = c.stringWidth(name, FONT_NAME, 12)
-    c.drawString((PAGE_WIDTH - w) / 2, 100, name)
-    
-    c.showPage()
-    
-    # Table of Contents
-    c.setFont(FONT_NAME, 16)
-    c.setFillColor(BLACK)
-    title = "Table of Contents"
-    w = c.stringWidth(title, FONT_NAME, 16)
-    c.drawString((PAGE_WIDTH - w) / 2, PAGE_HEIGHT - 60, title)
-    
-    c.setLineWidth(2)
-    c.line(LEFT_MARGIN, PAGE_HEIGHT - 75, RIGHT_MARGIN, PAGE_HEIGHT - 75)
-    
-    c.setFont(FONT_NAME, 10)
-    y_pos = PAGE_HEIGHT - 100
-    for lesson in data["lessons"]:
-        if y_pos < 100:
-            c.showPage()
-            y_pos = PAGE_HEIGHT - 60
+    # Clean up
+    import os
+    if os.path.exists(temp_json):
+        os.remove(temp_json)
         
-        plate_text = f"Plate {lesson['plate_number']}"
-        c.drawString(LEFT_MARGIN, y_pos, plate_text)
-        c.drawString(LEFT_MARGIN + 80, y_pos, lesson['title'])
-        date_w = c.stringWidth(lesson['date'], FONT_NAME, 10)
-        c.drawString(RIGHT_MARGIN - date_w, y_pos, lesson['date'])
-        
-        c.setDash(1, 2)
-        c.setLineWidth(0.5)
-        c.line(LEFT_MARGIN, y_pos - 2, RIGHT_MARGIN, y_pos - 2)
-        c.setDash()
-        
-        y_pos -= 20
-    
-    c.showPage()
-    
-    # Generate plates
-    for lesson in data["lessons"]:
-        draw_standard_plate(c, lesson["plate_number"], lesson["title"], lesson["date"])
-        c.showPage()
-    
-    c.save()
-    print(f"✓ Generated: {args.output}")
+    print(f"✓ Success! Created {args.output}")
 
 if __name__ == "__main__":
     main()
