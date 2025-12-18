@@ -478,12 +478,11 @@ with tab1:
                         # Preview PDF
                         st.markdown("### 📄 PDF Preview")
                         base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                        pdf_display = f'''
-                            <object data="data:application/pdf;base64,{base64_pdf}" type="application/pdf" width="100%" height="800px">
-                                <p>Your browser's built-in PDF viewer is unavailable. Please download the PDF above to view it.</p>
-                            </object>
-                        '''
+                        pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
                         st.markdown(pdf_display, unsafe_allow_html=True)
+                        
+                        # Fallback link
+                        st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" download="Syllabus_Platebook.pdf">Open Preview in New Tab</a>', unsafe_allow_html=True)
                         
                         # Cleanup
                         if os.path.exists(temp_json): os.remove(temp_json)
@@ -546,12 +545,11 @@ with tab2:
                     # Preview PDF
                     st.markdown("### 📄 PDF Preview")
                     base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                    pdf_display = f'''
-                        <object data="data:application/pdf;base64,{base64_pdf}" type="application/pdf" width="100%" height="800px">
-                            <p>Your browser's built-in PDF viewer is unavailable. Please download the PDF above to view it.</p>
-                        </object>
-                    '''
+                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
                     st.markdown(pdf_display, unsafe_allow_html=True)
+                    
+                    # Fallback link
+                    st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" download="GoogleSheet_Platebook.pdf">Open Preview in New Tab</a>', unsafe_allow_html=True)
                     
                     if os.path.exists(temp_json): os.remove(temp_json)
                     if img_path and os.path.exists(img_path): os.remove(img_path)
