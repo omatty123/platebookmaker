@@ -137,11 +137,21 @@ def draw_round(c, x, top, w, h, fill=False, gray=False):
 
 def draw_centered(c, text, x, top, w, h, size=FONT_SIZE, bold=False):
     font = "Helvetica-Bold" if bold else FONT_NAME
-    c.setFont(font, size)
+    
+    # Auto-shrink logic
+    current_size = size
+    min_size = 6
+    text_width = c.stringWidth(text, font, current_size)
+    available_width = w - 4 # 2px padding on each side
+    
+    while text_width > available_width and current_size > min_size:
+        current_size -= 0.5
+        text_width = c.stringWidth(text, font, current_size)
+    
+    c.setFont(font, current_size)
     c.setFillColor(BLACK)  # Ensure text is always black
-    tw = c.stringWidth(text, font, size)
-    y = _y(top, h) + (h - size) / 2 + 2
-    c.drawString(x + (w - tw) / 2, y, text)
+    y = _y(top, h) + (h - current_size) / 2 + 2 # Recenter vertically based on new size
+    c.drawString(x + (w - text_width) / 2, y, text)
 
 # =============================================================================
 # PLATE DRAWING (NO PAGINATION HERE)
