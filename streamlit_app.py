@@ -25,91 +25,98 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* PREMIUM & RICH DESIGN (Restored) */
+    /* MODERN DIGNIFIED DESIGN (Clean Slate) */
     html, body, [class*="css"]  {
-        font-family: 'Inter', system-ui, sans-serif;
-        color: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #0f172a; /* Slate 900 */
+        background-color: #ffffff;
     }
     
-    /* Hero Section */
+    /* Headers */
+    h1, h2, h3 {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.02em;
+    }
+    
+    /* Hero Section - Minimal */
     .hero {
-        background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
-        padding: 2.5rem;
-        border-radius: 12px;
-        color: white;
+        background-color: #f8fafc; /* Slate 50 */
+        border: 1px solid #e2e8f0; /* Slate 200 */
+        padding: 2rem;
+        border-radius: 8px;
+        color: #0f172a;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
-        text-align: center;
+        text-align: left;
     }
     .hero h1 {
-        color: white !important;
-        font-size: 3rem !important;
-        font-weight: 800;
+        font-size: 2.25rem !important;
+        font-weight: 700;
         margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .hero p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        font-weight: 500;
+        font-size: 1.1rem;
+        color: #475569; /* Slate 600 */
+        font-weight: 400;
+        margin: 0;
     }
 
-    /* Tabs - Pill Style */
+    /* Tabs - Clean Pills */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        border-bottom: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1rem;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #f1f5f9;
-        border-radius: 8px;
-        padding: 8px 16px;
-        border: 1px solid transparent;
-        color: #64748b;
-        font-weight: 600;
-        transition: all 0.2s;
+        background-color: transparent;
+        border-radius: 6px;
+        padding: 6px 16px;
+        border: none;
+        color: #64748b; /* Slate 500 */
+        font-weight: 500;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #4f46e5 !important;
-        color: white !important;
-        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        background-color: #f1f5f9 !important; /* Slate 100 */
+        color: #0f172a !important;
+        font-weight: 600;
     }
 
-    /* Primary Button - Gradient & Shadow */
+    /* Button - Solid & Serious */
     div.stButton > button {
-        background: linear-gradient(to right, #4f46e5, #4338ca);
+        background-color: #0f172a; /* Slate 900 */
         color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.2s;
+        border: 1px solid #0f172a;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 500;
         width: 100%;
-        font-size: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        transition: all 0.15s ease;
+        box-shadow: none;
     }
     div.stButton > button:hover {
+        background-color: #1e293b; /* Slate 800 */
+        border-color: #1e293b;
         transform: translateY(-1px);
-        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
     }
     
-    /* Inputs - Softer look */
+    /* Inputs - refined */
     .stTextArea textarea, .stTextInput input {
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1; /* Slate 300 */
+        color: #0f172a;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        border-color: #0f172a;
+        box-shadow: 0 0 0 1px #0f172a;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Hero Header (Rich)
+# Hero Header (Clean)
 st.markdown("""
 <div class="hero">
-    <h1>📚 Platebook Generator</h1>
-    <p>Turn your Syllabus directly into a <b>Pixel-Perfect PDF</b>.</p>
+    <h1>Platebook Generator</h1>
+    <p>Professional Syllabus Typesetter</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -179,7 +186,7 @@ with tab1:
     # --- NOW RENDER SIDEBAR (After state potentially updated) ---
     # --- NOW RENDER SIDEBAR (After state potentially updated) ---
     with st.sidebar:
-        st.header("🎨 Cover & Info")
+        st.header("⚙️ Cover & Settings")
         
         st.caption("Upload a custom cover image to make your platebook stand out.")
         cover_image = st.file_uploader("Upload Cover Image", type=['png', 'jpg', 'jpeg'])
