@@ -25,19 +25,24 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* SLEEK & SHARP DESIGN */
+    /* SLEEK & THIN DESIGN */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
     html, body, [class*="css"]  {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: #0f172a;
+        color: #1e293b;
+        font-weight: 300; /* Light/Slim default */
+    }
+    
+    h1, h2, h3 {
+        font-weight: 500 !important; /* Medium headers, not Bold */
     }
     
     /* Hero Section */
     .hero {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        padding: 1.5rem;
-        border-radius: 6px;
-        color: #0f172a;
+        background-color: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1.5rem 0;
         margin-bottom: 1.5rem;
         text-align: left;
         display: flex;
@@ -47,15 +52,15 @@ st.markdown("""
     .hero h1 {
         color: #0f172a !important;
         font-size: 1.75rem !important;
-        font-weight: 700;
+        font-weight: 400; /* Regular weight for title = Slimmer */
         margin: 0;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
     }
     .hero p {
         font-size: 1rem;
         color: #64748b;
         margin: 0;
-        font-weight: 400;
+        font-weight: 300;
     }
 
     /* Tabs - Minimal Underline Style */
@@ -69,27 +74,28 @@ st.markdown("""
         border-radius: 0;
         padding: 8px 0;
         border: none;
-        color: #64748b;
-        font-weight: 500;
+        color: #94a3b8;
+        font-weight: 400;
     }
     .stTabs [aria-selected="true"] {
         background-color: transparent !important;
         color: #0f172a !important;
-        border-bottom: 2px solid #0f172a;
+        border-bottom: 1px solid #0f172a; /* Thinner border */
         box-shadow: none;
+        font-weight: 500;
     }
 
     /* Primary Button - Flat & Professional */
     div.stButton > button {
-        background: #0f172a;
+        background: #1e293b;
         color: white;
         border: none;
         padding: 0.6rem 1.2rem;
-        border-radius: 6px;
-        font-weight: 500;
+        border-radius: 4px; /* Sharper */
+        font-weight: 400; /* Slimmer text */
         transition: background 0.15s ease;
         width: 100%;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         box-shadow: none;
     }
     div.stButton > button:hover {
@@ -101,11 +107,12 @@ st.markdown("""
     /* Inputs - Clean lines */
     .stTextArea textarea, .stTextInput input {
         border-radius: 4px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid #e2e8f0;
+        font-weight: 300;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #0f172a;
-        box-shadow: 0 0 0 1px #0f172a;
+        border-color: #334155;
+        box-shadow: none;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -115,9 +122,9 @@ st.markdown("""
 <div class="hero">
     <div>
         <h1>Platebook Generator</h1>
-        <p>Syllabus to PDF. Pixel-Perfect.</p>
+        <p>Syllabus to PDF.</p>
     </div>
-    <div style="font-size: 2rem;">📚</div>
+    <div style="font-size: 1.5rem; opacity: 0.5;">📚</div>
 </div>
 """, unsafe_allow_html=True)
 
