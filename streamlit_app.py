@@ -190,19 +190,29 @@ with tab1:
             # Remove file extensions or urls markdown
             text = re.sub(r'\[.*?\]\s*\(https.*?\)', '', text) 
             
+            # Remove "Week X" if it ended up in the title
+            text = re.sub(r'Week\s+\d+', '', text, flags=re.IGNORECASE)
+            
+            # Remove "Listen to..."
+            text = re.sub(r'Listen to.*', '', text, flags=re.IGNORECASE)
+            
             # Clean up extra spaces
             text = re.sub(r'\s+', ' ', text).strip()
-            return text.strip(" ,.-:")
+            return text.strip(" ,.-:/") # added slash to strip
 
         for line in lines:
             line = line.strip()
             if not line: continue
+            
+            # Skip "Final Presentation" lines entirely
+            if "final presentation" in line.lower(): continue
             
             is_new_date = False
             new_date_val = None
             remainder = ""
 
             # Check 1: Slash Date (1/5)
+            # ... (regex logic same as before) ...
             m_slash = slash_date.match(line)
             if m_slash:
                 m, d = m_slash.groups()
@@ -245,9 +255,11 @@ with tab1:
                     # Join all parts
                     cleaned_parts = [clean_line_text(p) for p in current_title_parts]
                     cleaned_parts = [p for p in cleaned_parts if p] # Remove empty
+                    
+                    # Deduplicate? No, sequence matters.
                     final_title = " / ".join(cleaned_parts)
                     
-                    if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
+                    if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
                         parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
                         plate_count += 1
                         
@@ -265,7 +277,7 @@ with tab1:
              cleaned_parts = [p for p in cleaned_parts if p]
              final_title = " / ".join(cleaned_parts)
              
-             if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title:
+             if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
                 parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
 
         # Data Editor
