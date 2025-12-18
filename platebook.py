@@ -241,13 +241,26 @@ def draw_presentation_plate(c, n, date):
 # MAIN
 # =============================================================================
 
-def generate(lessons_file, output_pdf):
+def generate(lessons_file, output_pdf, cover_image_path=None):
     with open(lessons_file) as f:
         data = json.load(f)
 
     c = canvas.Canvas(output_pdf, pagesize=letter)
 
     # Cover Page - title at bottom, large space for image at top
+    # Draw image if provided
+    if cover_image_path:
+        try:
+            # Draw image centered in the top space
+            # Available space: approx y=250 to y=750
+            img_width = 500
+            img_height = 400
+            c.drawImage(cover_image_path, (PAGE_WIDTH - img_width)/2, 280, 
+                       width=img_width, height=img_height, 
+                       preserveAspectRatio=True, anchor='c')
+        except Exception as e:
+            print(f"Error drawing cover image: {e}")
+
     c.setFont("Helvetica-Bold", 18)
     c.setFillColor(BLACK)
     w = c.stringWidth(data["course"], "Helvetica-Bold", 18)
