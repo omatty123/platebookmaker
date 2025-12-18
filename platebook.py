@@ -297,6 +297,14 @@ def generate(lessons_file, output_pdf, cover_image_path=None):
     c.setLineWidth(2)
     c.line(LEFT_MARGIN, PAGE_HEIGHT - 75, RIGHT_MARGIN, PAGE_HEIGHT - 75)
     
+    # TOC Helper
+    def truncate_text(c, text, font, size, max_width):
+        if c.stringWidth(text, font, size) <= max_width:
+            return text
+        while c.stringWidth(text + "...", font, size) > max_width and len(text) > 0:
+            text = text[:-1]
+        return text + "..."
+
     c.setFont(FONT_NAME, 10)
     y_pos = PAGE_HEIGHT - 100
     for lesson in data["lessons"]:
@@ -306,8 +314,15 @@ def generate(lessons_file, output_pdf, cover_image_path=None):
         
         plate_text = f"Plate {lesson['plate_number']}"
         c.drawString(LEFT_MARGIN, y_pos, plate_text)
-        c.drawString(LEFT_MARGIN + 80, y_pos, lesson['title'])
+        
+        # Calculate available width for title
+        # Left margin + 80 is start. Date ends at Right Margin. Date is approx 60-80px.
         date_w = c.stringWidth(lesson['date'], FONT_NAME, 10)
+        max_title_w = (RIGHT_MARGIN - date_w - 20) - (LEFT_MARGIN + 80)
+        
+        short_title = truncate_text(c, lesson['title'], FONT_NAME, 10, max_title_w)
+        c.drawString(LEFT_MARGIN + 80, y_pos, short_title)
+        
         c.drawString(RIGHT_MARGIN - date_w, y_pos, lesson['date'])
         
         # Dotted line

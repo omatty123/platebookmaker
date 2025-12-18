@@ -260,6 +260,7 @@ with tab1:
                     final_title = " / ".join(cleaned_parts)
                     
                     if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
+                        if len(final_title) > 150: final_title = final_title[:147] + "..."
                         parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
                         plate_count += 1
                         
@@ -278,6 +279,7 @@ with tab1:
              final_title = " / ".join(cleaned_parts)
              
              if final_title and "No Class" not in final_title and "Midterm" not in final_title and "MTRP" not in final_title and "Final presentation" not in final_title.lower():
+                if len(final_title) > 150: final_title = final_title[:147] + "..."
                 parsed_data.append({"Plate": plate_count, "Date": current_date_str, "Title": final_title})
 
         # Data Editor
