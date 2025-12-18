@@ -54,15 +54,26 @@ def parse_header_info(text):
     lines = text.split('\n')
     c_name = None
     t_name = None
-    for i, line in enumerate(lines[:10]):
+    
+    # scan first few lines
+    for i, line in enumerate(lines[:15]): # Scan a bit deeper
         line = line.strip()
         if not line: continue
+        
+        # Ignore Google Doc/System junk
+        if line.startswith("[") or line.startswith("http") or "Report abuse" in line:
+            continue
+        
+        # Term Regex (Winter 2026, Fall 2025, etc)
         term_match = re.search(r'(Fall|Winter|Spring|Summer)\s+\d{4}', line, re.IGNORECASE)
         if term_match: t_name = term_match.group(0)
-        if not c_name and len(line) > 5:
+        
+        # Course Name: First substantial line that ISN'T the term
+        if not c_name and len(line) > 5 and not term_match:
+            # If line is "Syllabus" or similar, skip
             if "syllabus" in line.lower() and len(line) < 15: continue
-            if term_match and len(line) < 20: continue
             c_name = line
+            
     return c_name, t_name
 
 # Initialize defaults
@@ -141,31 +152,36 @@ with tab1:
                 return f"{months[start_m-1]} {d}"
             return f"{m}/{d}"
 
-        # Helper to clean title noise
+        # Helper to clean title noise (Make it SHORT and COGENT)
         def clean_line_text(text):
             # Remove "ANTHOLOGY:" prefix
             text = re.sub(r'^ANTHOLOGY:\s*', '', text, flags=re.IGNORECASE)
-            # Remove page numbers like (pp 3-24) or (30-48) or (123 - 456)
-            text = re.sub(r'\(\s*\d+\s*[-–]\s*\d+\s*\)', '', text)
-            text = re.sub(r'\(pp?\.?\s*\d+.*?\)', '', text, flags=re.IGNORECASE)
             
-            # Remove "Introduction and Translation by..."
+            # Remove parentheses entirely (usually page numbers, dates, translators)
+            # e.g. (pp 3-24), (190-210), (Available as...)
+            text = re.sub(r'\s*\(.*?\)', '', text)
+            
+            # Remove "Dynasty" prefixes
+            text = re.sub(r'\b\w+\s+Dynasty\b', '', text, flags=re.IGNORECASE)
+            
+            # Remove quotes
+            text = text.replace('“', '').replace('”', '').replace('"', '')
+            
+            # Remove "Introduction" if it's generic (followed by comma or colon)
+            text = re.sub(r'^Introduction\s*[,:]\s*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Introduction and Translation.*', '', text, flags=re.IGNORECASE)
             
             # Remove assignments/papers
             text = re.sub(r'PAPER #\d+.*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Final paper.*', '', text, flags=re.IGNORECASE)
-            text = re.sub(r'Paper #\d+.*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'Preliminary Thesis.*', '', text, flags=re.IGNORECASE)
             text = re.sub(r'.*Due.*', '', text, flags=re.IGNORECASE)
             
-            # Remove "Turn in..." or "Submit..." if they appear (just in case)
-            text = re.sub(r'Turn in.*', '', text, flags=re.IGNORECASE)
+            # Remove file extensions or urls markdown
+            text = re.sub(r'\[.*?\]\s*\(https.*?\)', '', text) 
             
-            # Remove file extensions or urls
-            text = re.sub(r'https?://\S+', '', text)
-            text = re.sub(r'\[.*?\]\s*\(https.*?\)', '', text) # markdown links
-            
+            # Clean up extra spaces
+            text = re.sub(r'\s+', ' ', text).strip()
             return text.strip(" ,.-:")
 
         for line in lines:
