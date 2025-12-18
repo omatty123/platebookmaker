@@ -504,8 +504,6 @@
 
         async function generatePlatebook() {
             const sheetUrl = document.getElementById('sheetUrl').value.trim();
-            const courseName = "HIST 213 East Asia in the Modern World";
-            const termName = "Winter 2026";
 
             if (!sheetUrl) {
                 showStatus('Please paste a Google Sheet CSV URL', 'error');
@@ -514,38 +512,51 @@
 
             // Reset UI
             status.style.display = 'none';
-            printBtn.disabled = true;
-            printBtn.style.opacity = '0.5';
-            printBtn.style.cursor = 'not-allowed';
-            platebookDiv.innerHTML = '';
+            // Disable button
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerText = 'Generating...';
 
-            showStatus('Loading...', 'success');
+            showStatus('Generating Perfect PDF on local server...', 'success');
 
             try {
-                // Use CORS proxy
-                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
-                const response = await fetch(proxyUrl);
+                // Send to local Python Server
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: sheetUrl })
+                });
 
-                if (!response.ok) throw new Error('Failed to fetch data');
-
-                const csvText = await response.text();
-                const lessons = parseCSV(csvText);
-
-                if (lessons.length === 0) {
-                    showStatus('No lessons found. Make sure you published as CSV!', 'error');
-                    return;
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || 'Server error');
                 }
 
-                renderPlatebook(courseName, termName, lessons);
+                // Get the blob (PDF)
+                const blob = await response.blob();
 
-                showStatus(`✓ Ready to print! (${lessons.length} plates)`, 'success');
-                printBtn.disabled = false;
-                printBtn.style.opacity = '1';
-                printBtn.style.cursor = 'pointer';
+                // Create download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = "HIST213_Platebook_Winter2026.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                showStatus('✓ PDF Downloaded Successfully!', 'success');
 
             } catch (error) {
-                showStatus('Error: ' + error.message, 'error');
+                if (error.message.includes('Failed to fetch')) {
+                    showStatus('Error: Is the local server running? Run "python3 platebook_server.py"', 'error');
+                } else {
+                    showStatus('Error: ' + error.message, 'error');
+                }
                 console.error(error);
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').innerText = 'Generate';
             }
         }
 
