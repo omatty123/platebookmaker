@@ -2,3 +2,4 @@ reportlab
 requests
 streamlit
 pandas
+pymupdf

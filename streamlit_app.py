@@ -7,6 +7,7 @@ import re
 import pandas as pd
 import base64
 import platebook
+import fitz  # PyMuPDF
 from platebook import generate
 
 # Page Config
@@ -30,97 +31,65 @@ st.markdown("""
 
     html, body, [class*="css"]  {
         font-family: 'Inter', sans-serif;
-        color: #111827; /* Gray 900 */
-        background-color: #ffffff;
+        color: #1f2937; /* Gray 800 */
     }
     
     /* The Moonlight Glow - Vignette */
     .stApp {
-        background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
-                    #ffffff;
+        background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
     }
     
     /* Headers */
     h1, h2, h3 {
         color: #111827 !important;
         font-weight: 600 !important;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.025em;
     }
     
-    /* Hero Section - Card Style */
+    /* Hero Section - Elevated Glassmorphism */
     .hero {
-        background-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(229, 231, 235, 0.5);
-        padding: 2.5rem;
-        border-radius: 12px;
-        color: #111827;
-        margin-bottom: 2rem;
-        text-align: left;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        padding: 3rem;
+        border-radius: 20px;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        border-top: 4px solid #2563eb;
     }
     .hero h1 {
-        font-size: 2.5rem !important;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #2563eb !important; /* Electric Blue Accent */
+        font-size: 2.75rem !important;
+        background: linear-gradient(90deg, #1d4ed8, #2563eb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.75rem;
     }
     .hero p {
-        font-size: 1.125rem;
-        color: #4b5563; /* Gray 600 */
+        font-size: 1.25rem;
+        color: #64748b; /* Slate 500 */
         font-weight: 400;
-        margin: 0;
     }
 
-    /* Tabs - Clean & Spaced */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 16px;
-        border-bottom: 1px solid #e5e7eb;
-        padding-bottom: 0;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: transparent;
-        border-radius: 6px 6px 0 0;
-        padding: 10px 20px;
-        border: none;
-        color: #6b7280; /* Gray 500 */
-        font-weight: 500;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: transparent !important;
-        color: #2563eb !important; /* Electric Blue */
-        border-bottom: 2px solid #2563eb;
-        font-weight: 600;
+    /* PDF Page Preview Style */
+    .pdf-page-container {
+        background: white;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
     }
 
-    /* Button - Electric Blue */
+    /* Button Enhancement */
     div.stButton > button {
-        background-color: #2563eb; /* Electric Blue */
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px; /* 12px might be too round for small button */
-        font-weight: 500;
-        width: 100%;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 10px;
     }
     div.stButton > button:hover {
-        background-color: #1d4ed8; /* Darker Blue */
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-    }
-    
-    /* Inputs - refined */
-    .stTextArea textarea, .stTextInput input {
-        border-radius: 8px;
-        border: 1px solid #d1d5db; /* Gray 300 */
-        padding: 0.75rem;
-        transition: border-color 0.15s ease;
-    }
-    .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #2563eb; /* Electric Blue */
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Glow ring */
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+        transform: translateY(-2px);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -178,6 +147,23 @@ if 'course_name_input' not in st.session_state:
 if 'term_name_input' not in st.session_state:
     st.session_state.term_name_input = ""
 
+# Helper to render PDF as images for preview
+def render_pdf_preview(pdf_path, max_pages=5):
+    try:
+        doc = fitz.open(pdf_path)
+        st.markdown(f"### 📄 Visual Preview (First {min(len(doc), max_pages)} pages)")
+        for page_num in range(min(len(doc), max_pages)):
+            page = doc.load_page(page_num)
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # High res
+            img_data = pix.tobytes("png")
+            
+            # Wrap in a container for page styling (shadow/border)
+            st.image(img_data, caption=f"Page {page_num + 1}", use_container_width=True)
+            st.divider()
+        doc.close()
+    except Exception as e:
+        st.error(f"Could not render preview: {e}")
+
 # --- TAB 1: SYLLABUS PARSER (Render First to capture input) ---
 with tab1:
     st.subheader("1. ✨ Paste Syllabus Text")
@@ -195,6 +181,7 @@ with tab1:
              st.session_state.course_name_input = detected_course
         if detected_term and not st.session_state.term_name_input:
              st.session_state.term_name_input = detected_term
+
 
     # --- NOW RENDER SIDEBAR (After state potentially updated) ---
     # --- NOW RENDER SIDEBAR (After state potentially updated) ---
@@ -297,8 +284,8 @@ with tab1:
             # Remove "Week X" if it ended up in the title
             text = re.sub(r'Week\s+\d+', '', text, flags=re.IGNORECASE)
             
-            # Remove "Listen to..."
-            text = re.sub(r'Listen to.*', '', text, flags=re.IGNORECASE)
+            # Remove "Reading:" or "Discussion:" prefix
+            text = re.sub(r'^(Readings?|Discussion|Watch|Recommended|Optional|Listen to):\s*', '', text, flags=re.IGNORECASE)
             
             # Remove "Blast from the past"
             text = re.sub(r'Blast from the past.*', '', text, flags=re.IGNORECASE)
@@ -475,14 +462,12 @@ with tab1:
                         
                         st.balloons()
                         
-                        # Preview PDF
-                        st.markdown("### 📄 PDF Preview")
-                        base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                        pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-                        st.markdown(pdf_display, unsafe_allow_html=True)
+                        # Render Preview
+                        render_pdf_preview(output_pdf)
                         
                         # Fallback link
-                        st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" download="Syllabus_Platebook.pdf">Open Preview in New Tab</a>', unsafe_allow_html=True)
+                        base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
+                        st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" target="_blank">Open Full PDF in New Tab</a>', unsafe_allow_html=True)
                         
                         # Cleanup
                         if os.path.exists(temp_json): os.remove(temp_json)
@@ -542,14 +527,12 @@ with tab2:
                         mime="application/pdf"
                     )
                     
-                    # Preview PDF
-                    st.markdown("### 📄 PDF Preview")
-                    base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-                    st.markdown(pdf_display, unsafe_allow_html=True)
+                    # Render Preview
+                    render_pdf_preview(output_pdf)
                     
                     # Fallback link
-                    st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" download="GoogleSheet_Platebook.pdf">Open Preview in New Tab</a>', unsafe_allow_html=True)
+                    base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
+                    st.markdown(f'<a href="data:application/pdf;base64,{base64_pdf}" target="_blank">Open Full PDF in New Tab</a>', unsafe_allow_html=True)
                     
                     if os.path.exists(temp_json): os.remove(temp_json)
                     if img_path and os.path.exists(img_path): os.remove(img_path)
