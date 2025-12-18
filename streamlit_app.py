@@ -46,16 +46,14 @@ with st.sidebar:
     # Course Info
     st.subheader("Course Details")
     
-    DEFAULT_COURSE = "HIST 213 East Asia in the Modern World"
-    DEFAULT_TERM = "Winter 2026"
-    
+    # Initialize empty defaults
     if 'course_name_input' not in st.session_state:
-        st.session_state.course_name_input = DEFAULT_COURSE
+        st.session_state.course_name_input = ""
     if 'term_name_input' not in st.session_state:
-        st.session_state.term_name_input = DEFAULT_TERM
+        st.session_state.term_name_input = ""
         
-    course_name = st.text_input("Course Name", key="course_name_input")
-    term_name = st.text_input("Term", key="term_name_input")
+    course_name = st.text_input("Course Name", key="course_name_input", placeholder="e.g. Chinese Literature")
+    term_name = st.text_input("Term", key="term_name_input", placeholder="e.g. Winter 2026")
 
 # Header
 st.title("📚 Platebook Generator")
@@ -113,13 +111,12 @@ with tab1:
         # Auto-detect header info
         detected_course, detected_term = parse_header_info(syllabus_text)
         
-        # Only update if we are purely on defaults (don't overwrite user edits)
-        # OR if it seems the user just pasted a new syllabus
+        # Only update if fields are empty (don't overwrite user edits)
         updated = False
-        if detected_course and st.session_state.course_name_input == DEFAULT_COURSE:
+        if detected_course and not st.session_state.course_name_input:
              st.session_state.course_name_input = detected_course
              updated = True
-        if detected_term and st.session_state.term_name_input == DEFAULT_TERM:
+        if detected_term and not st.session_state.term_name_input:
              st.session_state.term_name_input = detected_term
              updated = True
              
