@@ -25,106 +25,91 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* SLEEK & THIN DESIGN */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
-
+    /* PREMIUM & RICH DESIGN (Restored) */
     html, body, [class*="css"]  {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
         color: #1e293b;
-        font-weight: 300; /* Light/Slim default */
-    }
-    
-    h1, h2, h3 {
-        font-weight: 500 !important; /* Medium headers, not Bold */
     }
     
     /* Hero Section */
     .hero {
-        background-color: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 1.5rem 0;
-        margin-bottom: 1.5rem;
-        text-align: left;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
+        padding: 2.5rem;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+        text-align: center;
     }
     .hero h1 {
-        color: #0f172a !important;
-        font-size: 1.75rem !important;
-        font-weight: 400; /* Regular weight for title = Slimmer */
-        margin: 0;
-        letter-spacing: -0.03em;
+        color: white !important;
+        font-size: 3rem !important;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .hero p {
-        font-size: 1rem;
-        color: #64748b;
-        margin: 0;
-        font-weight: 300;
-    }
-
-    /* Tabs - Minimal Underline Style */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: transparent;
-        border-radius: 0;
-        padding: 8px 0;
-        border: none;
-        color: #94a3b8;
-        font-weight: 400;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: transparent !important;
-        color: #0f172a !important;
-        border-bottom: 1px solid #0f172a; /* Thinner border */
-        box-shadow: none;
+        font-size: 1.2rem;
+        opacity: 0.9;
         font-weight: 500;
     }
 
-    /* Primary Button - Flat & Professional */
+    /* Tabs - Pill Style */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        border-bottom: none;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #f1f5f9;
+        border-radius: 8px;
+        padding: 8px 16px;
+        border: 1px solid transparent;
+        color: #64748b;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #4f46e5 !important;
+        color: white !important;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Primary Button - Gradient & Shadow */
     div.stButton > button {
-        background: #1e293b;
+        background: linear-gradient(to right, #4f46e5, #4338ca);
         color: white;
         border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 4px; /* Sharper */
-        font-weight: 400; /* Slimmer text */
-        transition: background 0.15s ease;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s;
         width: 100%;
-        font-size: 0.9rem;
-        box-shadow: none;
+        font-size: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
     }
     div.stButton > button:hover {
-        background: #334155;
-        transform: none;
-        box-shadow: none;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
     }
     
-    /* Inputs - Clean lines */
+    /* Inputs - Softer look */
     .stTextArea textarea, .stTextInput input {
-        border-radius: 4px;
+        border-radius: 8px;
         border: 1px solid #e2e8f0;
-        font-weight: 300;
+        padding: 0.75rem;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #334155;
-        box-shadow: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Hero Header (Minimal)
+# Hero Header (Rich)
 st.markdown("""
 <div class="hero">
-    <div>
-        <h1>Platebook Generator</h1>
-        <p>Syllabus to PDF.</p>
-    </div>
-    <div style="font-size: 1.5rem; opacity: 0.5;">📚</div>
+    <h1>📚 Platebook Generator</h1>
+    <p>Turn your Syllabus directly into a <b>Pixel-Perfect PDF</b>.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -473,7 +458,11 @@ with tab1:
                         # Preview PDF
                         st.markdown("### 📄 PDF Preview")
                         base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                        pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+                        pdf_display = f'''
+                            <object data="data:application/pdf;base64,{base64_pdf}" type="application/pdf" width="100%" height="800px">
+                                <p>Your browser's built-in PDF viewer is unavailable. Please download the PDF above to view it.</p>
+                            </object>
+                        '''
                         st.markdown(pdf_display, unsafe_allow_html=True)
                         
                         # Cleanup
@@ -537,7 +526,11 @@ with tab2:
                     # Preview PDF
                     st.markdown("### 📄 PDF Preview")
                     base64_pdf = base64.b64encode(pdf_data).decode('utf-8')
-                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+                    pdf_display = f'''
+                        <object data="data:application/pdf;base64,{base64_pdf}" type="application/pdf" width="100%" height="800px">
+                            <p>Your browser's built-in PDF viewer is unavailable. Please download the PDF above to view it.</p>
+                        </object>
+                    '''
                     st.markdown(pdf_display, unsafe_allow_html=True)
                     
                     if os.path.exists(temp_json): os.remove(temp_json)
